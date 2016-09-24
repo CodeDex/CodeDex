@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.codedex">
 
+    <uses-sdk xmlns:tools="http://schemas.android.com/tools" tools:overrideLibrary="io.github.kbiakov.codeview"/>
+
     <application
         android:name=".CodeDexApplication"
         android:allowBackup="true"

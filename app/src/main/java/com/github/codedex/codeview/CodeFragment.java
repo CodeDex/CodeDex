@@ -33,9 +33,11 @@ public class CodeFragment extends Fragment {
         View rowView = inflater.inflate(R.layout.fragment_code_view, container, false);
         Context context = getActivity();
         CodeView codeView = (CodeView) rowView.findViewById(R.id.code_view);
-        codeView.highlightCode("java")
-                .setColorTheme(ColorTheme.SOLARIZED_LIGHT.withBgContent(ContextCompat.getColor(context, R.color.md_grey_300)))
-                .setCodeContent(TEST_CODE);
+        new Highlighter(context)
+                .code(TEST_CODE)
+                .language("java")
+                .theme(ColorTheme.SOLARIZED_LIGHT.withBgContent(ContextCompat.getColor(context, R.color.md_grey_300)))
+                .highlight(codeView);
         return rowView;
     }
 }

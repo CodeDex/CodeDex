@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.github.codedex.codeview.classifier.CodeProcessor;
 
+
 /**
  * CodeDex Application class
  */
