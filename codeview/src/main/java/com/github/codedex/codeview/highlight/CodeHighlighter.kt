@@ -155,18 +155,29 @@ enum class ColorTheme(
             myBgNum,
             myNoteColor)
 
+    fun theme() = ColorThemeData(
+            syntaxColors,
+            numColor,
+            bgContent,
+            bgNum,
+            noteColor)
+
     /**
      * Decompose preset color theme to data.
      * Use this form for using from Java.
      */
     fun withSyntaxColors(mySyntaxColors: SyntaxColors) =
             with(mySyntaxColors = mySyntaxColors)
+
     fun withNumColor(myNumColor: Int) =
             with(myNumColor = myNumColor)
+
     fun withBgContent(myBgContent: Int) =
             with(myBgContent = myBgContent)
+
     fun withBgNum(myBgNum: Int) =
             with(myBgNum = myBgNum)
+
     fun withNoteColor(myNoteColor: Int) =
             with(myNoteColor = myNoteColor)
 }
@@ -215,6 +226,7 @@ fun Int.hex() = "#${Integer.toHexString(this)}"
  * @return Is value equals to found or not condition
  */
 fun Int.isFound() = this >= 0
+
 fun Int.notFound() = this == -1
 
 /**

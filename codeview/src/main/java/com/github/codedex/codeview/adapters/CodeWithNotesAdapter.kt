@@ -1,6 +1,8 @@
 package com.github.codedex.codeview.adapters
 
 import android.content.Context
+import com.github.codedex.codeview.Highlighter
+import com.github.codedex.codeview.highlight.ColorThemeData
 import com.github.codedex.codeview.highlight.color
 import com.github.codedex.codeview.views.LineNoteView
 
@@ -10,16 +12,20 @@ import com.github.codedex.codeview.views.LineNoteView
  * Default code content adapter.
  *
  */
-class CodeWithNotesAdapter : AbstractCodeAdapter<String> {
+open class CodeWithNotesAdapter : AbstractCodeAdapter<String> {
+
+    constructor(context: Context, h: Highlighter) : super(context, h)
+
     /**
      * Default constructor.
      */
-    constructor(context: Context, content: String) : super(context, content)
+    constructor(context: Context, content: String, colorTheme: ColorThemeData) : super(context, content, colorTheme)
+
+    //todo: inflateFooter(int layoutId)
 
     /**
      * Create footer view.
      *
-     * @param context Context
      * @param entity Note content
      * @param isFirst Is first footer view
      */
@@ -27,6 +33,6 @@ class CodeWithNotesAdapter : AbstractCodeAdapter<String> {
             LineNoteView.create(context,
                     text = entity,
                     isFirst = isFirst,
-                    bgColor = colorTheme.bgNum.color(),
-                    textColor = colorTheme.noteColor.color())
+                    bgColor = highlighter.theme.bgNum.color(),
+                    textColor = highlighter.theme.noteColor.color())
 }

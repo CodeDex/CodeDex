@@ -1,6 +1,8 @@
 package com.github.codedex.codeview.adapters
 
 import android.content.Context
+import com.github.codedex.codeview.Highlighter
+import com.github.codedex.codeview.highlight.ColorThemeData
 import com.github.codedex.codeview.views.DiffModel
 import com.github.codedex.codeview.views.LineDiffView
 
@@ -10,16 +12,18 @@ import com.github.codedex.codeview.views.LineDiffView
  * Code content adapter with ability to add diffs (additions & deletions) in footer.
  *
  */
-class CodeWithDiffsAdapter : AbstractCodeAdapter<DiffModel> {
+open class CodeWithDiffsAdapter : AbstractCodeAdapter<DiffModel> {
+
+    constructor(context: Context, h: Highlighter) : super(context, h)
+
     /**
      * Default constructor.
      */
-    constructor(context: Context, content: String) : super(context, content)
+    constructor(context: Context, content: String, theme: ColorThemeData) : super(context, content, theme)
 
     /**
      * Create footer view.
      *
-     * @param context Context
      * @param entity Note content
      * @param isFirst Is first footer
      */
