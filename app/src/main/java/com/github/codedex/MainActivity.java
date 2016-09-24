@@ -16,7 +16,7 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 public class MainActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
