@@ -2,10 +2,11 @@ package com.github.codedex.sourceparser.entity;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IPat (Local) on 24.09.2016.
+ * Contains metadata for package.
  */
 
 public class MetaPackage {
@@ -13,15 +14,59 @@ public class MetaPackage {
     private PackageData data;
 
     public interface PackageData {
-        Package getParentPackage();
+        MetaPackage getParentPackage();
     }
 
     private String name;
-    private List<Package> packages;
+    private List<MetaPackage> packages;
+    private List<MetaClass> classes;
+    private List<MetaInterface> interfaces;
+
+    public void setData(PackageData data) {
+        this.data = data;
+    }
 
     public MetaPackage(@NonNull String name, PackageData data) {
         this.name = name;
-        this.data = data;
+        this.packages = new ArrayList<>();
+        this.classes = new ArrayList<>();
+        this.interfaces = new ArrayList<>();
+        if (data == null) {
+            setData(new PackageData() {
+                @Override
+                public MetaPackage getParentPackage() {
+                    return null;
+                }
+            });
+            return;
+        }
+        setData(data);
+        this.data.getParentPackage().addChildPackage(this);
+    }
+
+    public void addChildPackage(@NonNull MetaPackage childPackage) {
+        if (!childPackage.getParentPackage().equals(this)) {
+            childPackage.getParentPackage().removePackage(childPackage);
+            childPackage.setData(new PackageData() {
+                @Override
+                public MetaPackage getParentPackage() {
+                    return MetaPackage.this;
+                }
+            });
+        }
+        if (!packages.contains(childPackage)) packages.add(childPackage);
+    }
+
+    public boolean removePackage(@NonNull MetaPackage childPackage) {
+        return packages.remove(childPackage);
+    }
+
+    public void addClass(@NonNull MetaClass childClass) {
+        classes.add(childClass);
+    }
+
+    public void addInterface(@NonNull MetaInterface childInterface) {
+        interfaces.add(childInterface);
     }
 
     public MetaPackage(@NonNull String name) {
@@ -32,7 +77,7 @@ public class MetaPackage {
         return name;
     }
 
-    public Package getParentPackage() {
+    public MetaPackage getParentPackage() {
         return data.getParentPackage();
     }
 }
