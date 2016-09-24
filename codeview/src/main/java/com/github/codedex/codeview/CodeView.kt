@@ -32,7 +32,6 @@ import java.util.*
  * it puts in queue to awaiting adapter creation & processing by build flow.
  * This helps to avoid errors & solve the init tasks in more elegant way.
  *
- * @author Kirill Biakov
  */
 class CodeView : RelativeLayout {
 
