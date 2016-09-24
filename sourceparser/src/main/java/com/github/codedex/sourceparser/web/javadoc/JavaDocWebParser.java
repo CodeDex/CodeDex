@@ -21,7 +21,10 @@ public class JavaDocWebParser {
             Elements packages = doc.select("ul[title=Packages]").first().children();
             Elements classes = doc.select("frame[name=packageFrame] ul").first().children();
 
-
+            for (int a = 0; a < packages.size(); a++) {
+                packages.get(a).ownText();      // Package name
+                packages.get(a).attr("href");   // Link to appropriate
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
