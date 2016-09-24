@@ -29,4 +29,6 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile project(':sourceparser')
     compile project(':codeview')
+    compile "com.mikepenz:iconics-core:2.8.1@aar"
+    compile 'com.mikepenz:community-material-typeface:1.5.54.2@aar'
 }
