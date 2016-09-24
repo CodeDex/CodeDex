@@ -5,7 +5,7 @@ import android.app.Application;
 import com.github.codedex.codeview.classifier.CodeProcessor;
 
 /**
- * Created by fabianterhorst on 24.09.16.
+ * CodeDex Application class
  */
 
 public class CodeDexApplication extends Application {
