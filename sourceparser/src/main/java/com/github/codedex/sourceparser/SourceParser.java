@@ -15,11 +15,16 @@ import okio.ByteString;
 
 public class SourceParser {
 
+    /*file*/
     private static final ByteString PACKAGE = ByteString.encodeUtf8("package");
     private static final ByteString IMPORT = ByteString.encodeUtf8("import");
+    private static final ByteString CLASS = ByteString.encodeUtf8("class");
+    /*syntax*/
     private static final ByteString SEMICOLON = ByteString.encodeUtf8(";");
     private static final ByteString EMPTY = ByteString.encodeUtf8(" ");
     private static final ByteString LINE_BREAK = ByteString.encodeUtf8("\n");
+    private static final ByteString BRACKET_OPENED = ByteString.encodeUtf8("{");
+    private static final ByteString BRACKET_CLOSED = ByteString.encodeUtf8("}");
 
     public static void parse(String sourceCode) {
         Buffer buffer = new Buffer();
@@ -36,11 +41,15 @@ public class SourceParser {
                         Log.d("package", buffer.readUtf8(endIndex));
                         buffer.skip(1);//semicolon
                     }
-                } else if (string.equals(IMPORT)) {
-                    nextType = 1;
+                } else if (nextType == 1 && string.equals(IMPORT)) {
                     long endIndex = buffer.indexOf(SEMICOLON);
                     Log.d("import", buffer.readUtf8(endIndex));
                     buffer.skip(1);//semicolon
+                } else if (string.equals(CLASS)) {
+                    nextType = 2;
+                    long endIndex = buffer.indexOf(BRACKET_OPENED);
+                    Log.d("class", buffer.readUtf8(endIndex));
+                    buffer.skip(1);//bracket
                 }
                 trimNext(buffer);
             }
