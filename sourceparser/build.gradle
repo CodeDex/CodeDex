@@ -28,5 +28,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'org.jsoup:jsoup:1.9.2'
+    compile 'com.squareup.okio:okio:1.10.0'
     testCompile 'junit:junit:4.12'
 }
