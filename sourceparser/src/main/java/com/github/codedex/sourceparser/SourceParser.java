@@ -25,7 +25,6 @@ public class SourceParser {
         Buffer buffer = new Buffer();
         buffer.writeUtf8(sourceCode);
         try {
-            //packages de.ab.cd
             int nextType = 0;
             ByteString string;
             while ((string = nextByteString(buffer)) != null) {
