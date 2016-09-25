@@ -26,6 +26,8 @@ public class SourceParser {
     private static final ByteString BRACKET_OPENED = ByteString.encodeUtf8("{");
     private static final ByteString BRACKET_CLOSED = ByteString.encodeUtf8("}");
 
+    //Todo: only parse public methods?? maybe??
+    //Todo: first imports, then search all classes, parse them, then search all interfaces, parse them, search variables, parse them, search methods, parse them (only the method declaration, not the implementation)
     public static void parse(String sourceCode) {
         Buffer buffer = new Buffer();
         buffer.writeUtf8(sourceCode);
@@ -50,6 +52,23 @@ public class SourceParser {
                     long endIndex = buffer.indexOf(BRACKET_OPENED);
                     Log.d("class", buffer.readUtf8(endIndex));
                     buffer.skip(1);//bracket
+
+                    trimNext(buffer);
+                    boolean opened= false;
+                    while ((string = nextByteString(buffer)) != null) {
+                        Log.d("class_imp_log", string.utf8());
+                        if(string.equals(BRACKET_OPENED)) {
+                            opened = true;
+                        }
+                        if (string.equals(BRACKET_CLOSED)) {
+                            if(!opened) {
+                                break;
+                            }
+                            opened = false;
+                        }
+                    }
+                    //endIndex = buffer.indexOf(BRACKET_CLOSED);
+                    //Log.d("class_impl", buffer.readUtf8(endIndex));
                 }
                 trimNext(buffer);
             }
@@ -62,9 +81,6 @@ public class SourceParser {
 
     @Nullable
     private static ByteString nextByteString(Buffer buffer) throws IOException {
-        //while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
-        //    buffer.skip(1);
-        //}
         trimNext(buffer);
         ByteString byteString = null;
         long endIndex1 = buffer.indexOf(EMPTY);
@@ -86,9 +102,6 @@ public class SourceParser {
                 return null;
             }
         }
-        //while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
-        //    buffer.skip(1);
-        //}
         trimNext(buffer);
         return byteString;
     }
