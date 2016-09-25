@@ -1,7 +1,9 @@
 package com.github.codedex.sourceparser.entity;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,25 +23,62 @@ public class MetaPackage {
     private List<MetaPackage> packages;
     private List<MetaClass> classes;
     private List<MetaInterface> interfaces;
+    private URL docURL;
+
+    private static MetaPackage rootPackage;
 
     public void setData(PackageData data) {
         this.data = data;
     }
 
-    public MetaPackage(@NonNull String name, PackageData data) {
-        this.name = name;
+    public static @NonNull MetaPackage getRootPackage() {
+        if (rootPackage == null) {
+            rootPackage = new MetaPackage();
+        }
+        return rootPackage;
+    }
+
+    private MetaPackage() {
+        this.name = null;
         this.packages = new ArrayList<>();
         this.classes = new ArrayList<>();
         this.interfaces = new ArrayList<>();
-        if (data == null) {
-            setData(new PackageData() {
+        setData(new PackageData() {
                 @Override
                 public MetaPackage getParentPackage() {
                     return null;
                 }
             });
-            return;
-        }
+    }
+
+    public MetaPackage(@NonNull String name) {                      // When calling this constructor, make sure you declare the parent package some point later
+        this(name, new PackageData() {
+            @Override
+            public MetaPackage getParentPackage() {
+                return null;
+            }
+        });
+    }
+
+    public MetaPackage(@NonNull String name, @Nullable URL docURL) {// When calling this constructor, make sure you declare the parent package some point later
+        this(name, new PackageData() {
+            @Override
+            public MetaPackage getParentPackage() {
+                return null;
+            }
+        }, docURL);
+    }
+
+    public MetaPackage(@NonNull String name, @NonNull PackageData data) {
+        this(name, data, null);
+    }
+
+    public MetaPackage(@NonNull String name, @NonNull PackageData data, @Nullable URL docURL) {
+        this.name = name;
+        this.packages = new ArrayList<>();
+        this.classes = new ArrayList<>();
+        this.interfaces = new ArrayList<>();
+        this.docURL = docURL;
         setData(data);
         this.data.getParentPackage().addChildPackage(this);
     }
@@ -69,8 +108,16 @@ public class MetaPackage {
         interfaces.add(childInterface);
     }
 
-    public MetaPackage(@NonNull String name) {
-        this(name, null);
+    public URL getDocURL() {
+        return docURL;
+    }
+
+    public boolean containsPackage(@NonNull MetaPackage childPackage) {
+        return packages.contains(childPackage);
+    }
+
+    public List<MetaPackage> getChildrenPackages() {
+        return packages;
     }
 
     public String getPackageName() {
@@ -79,5 +126,9 @@ public class MetaPackage {
 
     public MetaPackage getParentPackage() {
         return data.getParentPackage();
+    }
+
+    public boolean isRootPackage() {
+        return this.data.getParentPackage() == null;
     }
 }
