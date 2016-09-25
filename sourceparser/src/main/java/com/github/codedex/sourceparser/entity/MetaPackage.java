@@ -25,17 +25,15 @@ public class MetaPackage {
     private List<MetaInterface> interfaces;
     private URL docURL;
 
-    private static MetaPackage rootPackage;
-
     public void setData(PackageData data) {
         this.data = data;
     }
 
-    public static @NonNull MetaPackage getRootPackage() {
-        if (rootPackage == null) {
-            rootPackage = new MetaPackage();
-        }
-        return rootPackage;
+    /**
+     * Method for getting an instance of a root container for other MetaPackages
+     */
+    public static @NonNull MetaPackage getNewRootPackage() {
+        return new MetaPackage();
     }
 
     private MetaPackage() {
@@ -106,6 +104,10 @@ public class MetaPackage {
 
     public void addInterface(@NonNull MetaInterface childInterface) {
         interfaces.add(childInterface);
+    }
+
+    public void setDocURL(URL docURL) {
+        this.docURL = docURL;
     }
 
     public URL getDocURL() {
