@@ -3,6 +3,7 @@ package com.github.codedex.sourceparser;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import okio.Buffer;
@@ -24,15 +25,25 @@ public class SourceParser {
         Buffer buffer = new Buffer();
         buffer.writeUtf8(sourceCode);
         try {
+            //packages de.ab.cd
             int nextType = 0;
             ByteString string;
             while ((string = nextByteString(buffer)) != null) {
-                if (string.equals(PACKAGE)) {
+                Log.d("string", string.utf8());
+                if (nextType == 0) {
+                    if (string.equals(PACKAGE)) {
+                        nextType = 1;
+                        long endIndex = buffer.indexOf(SEMICOLON);
+                        Log.d("package", buffer.readUtf8(endIndex));
+                        buffer.skip(1);//semicolon
+                    }
+                } else if (string.equals(IMPORT)) {
                     nextType = 1;
+                    long endIndex = buffer.indexOf(SEMICOLON);
+                    Log.d("import", buffer.readUtf8(endIndex));
+                    buffer.skip(1);//semicolon
                 }
-                if (nextType > 0) {
-                    Log.d("package", string.utf8());
-                }
+                trimNext(buffer);
             }
         } catch (IOException eof) {
             //File end
@@ -43,26 +54,40 @@ public class SourceParser {
 
     @Nullable
     private static ByteString nextByteString(Buffer buffer) throws IOException {
-        while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
-            buffer.skip(1);
-        }
+        //while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
+        //    buffer.skip(1);
+        //}
+        trimNext(buffer);
+        ByteString byteString = null;
         long endIndex1 = buffer.indexOf(EMPTY);
         long endIndex2 = buffer.indexOf(LINE_BREAK);
         long endIndex = Math.min(endIndex1, endIndex1);
         if (endIndex == -1) {
-            if(endIndex1 == -1) {
+            if (endIndex1 == -1) {
                 endIndex = endIndex2;
-            } else if(endIndex2 == -1) {
+            } else if (endIndex2 == -1) {
                 endIndex = endIndex1;
             }
         }
         if (endIndex != -1) {
-            return buffer.readByteString(endIndex);
+            byteString = buffer.readByteString(endIndex);
         } else {
             if (buffer.size() > 0) {
-                return buffer.readByteString();
+                byteString = buffer.readByteString();
+            } else {
+                return null;
             }
-            return null;
+        }
+        //while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
+        //    buffer.skip(1);
+        //}
+        trimNext(buffer);
+        return byteString;
+    }
+
+    private static void trimNext(Buffer buffer) throws EOFException {
+        while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
+            buffer.skip(1);
         }
     }
 }
