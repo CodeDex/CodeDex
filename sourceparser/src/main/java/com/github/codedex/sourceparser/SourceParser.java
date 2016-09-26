@@ -59,17 +59,17 @@ public class SourceParser {
                     buffer.skip(1);//bracket
 
                     trimNext(buffer);
-                    boolean opened= false;
+                    int opened = 0;
                     while ((string = nextByteString(buffer)) != null) {
                         Log.d("class_imp_log", string.utf8());
                         if(string.equals(BRACKET_OPENED)) {
-                            opened = true;
+                            opened++;
                         }
                         if (string.equals(BRACKET_CLOSED)) {
-                            if(!opened) {
+                            if(opened == 0) {
                                 break;
                             }
-                            opened = false;
+                            opened--;
                         }
                     }
                     //endIndex = buffer.indexOf(BRACKET_CLOSED);
