@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import com.github.codedex.R;
 import com.github.codedex.codeview.highlight.ColorTheme;
 import com.github.codedex.sourceparser.ImportParser;
 import com.github.codedex.sourceparser.SourceParser;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Show source code from source file
@@ -38,7 +41,7 @@ public class CodeFragment extends Fragment {
             "import android.view.MenuItem;\n" +
             "\n" +
             "import com.github.codedex.codeview.CodeFragment;\n" +
-            "import com.mikepenz.community_material_typeface_library.CommunityMaterial;\n" +
+            "import com.mikepenz.community_material_typeface_library.CommunityMaterialaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;\n" +
             "import com.mikepenz.iconics.IconicsDrawable;\n" +
             "\n" +
             "public class MainActivity extends AppCompatActivity {\n" +
@@ -58,19 +61,32 @@ public class CodeFragment extends Fragment {
         CodeView codeView = (CodeView) rowView.findViewById(R.id.code_view);
         //codeView.getRecyclerView().setClipToPadding(false);
         codeView.getRecyclerView().setFitsSystemWindows(true);
-        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(
+        /*ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(0, -(int) getResources().getDimension(R.dimen.status_bar_height), 0, 0);
-        codeView.setLayoutParams(layoutParams);
+        );*/
+        //layoutParams.setMargins(0, -(int) (getResources().getDimension(R.dimen.status_bar_height)*2), 0, 0);
+        //codeView.setLayoutParams(layoutParams);
+        //codeView.setPadding(0, (int) (getResources().getDimension(R.dimen.status_bar_height)), 0, 0);
         SourceParser.parse(TEST_CODE);
         ImportParser.parseImports(TEST_CODE);
         String code = TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE;
         new Highlighter(context)
                 .code(code)
                 .language("java")
-                .theme(ColorTheme.SOLARIZED_LIGHT.withBgContent(ContextCompat.getColor(context, R.color.md_grey_300)))
+                .theme(ColorTheme.DEFAULT.withBgContent(ContextCompat.getColor(context, R.color.md_white_1000)))
+                .lineClickListener(new OnCodeLineClickListener() {
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public void onLineClicked(int n, @NotNull String line) {
+                        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+                            line = Html.fromHtml(line, Html.FROM_HTML_MODE_LEGACY).toString();
+                        else
+                            line = Html.fromHtml(line).toString();*/
+                        line = line.replaceAll("<[^>]*>","");
+                        Log.d("line click", n + ":line " + line);
+                    }
+                })
                 .highlight(codeView);
         return rowView;
     }
