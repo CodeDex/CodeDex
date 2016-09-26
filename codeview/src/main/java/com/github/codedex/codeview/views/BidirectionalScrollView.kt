@@ -69,8 +69,8 @@ class BidirectionalScrollView : HorizontalScrollView {
             //
             val oldX = scrollX
             val oldY = scrollY
-            val x = scroller.getCurrX()
-            val y = scroller.getCurrY()
+            val x = scroller.currX
+            val y = scroller.currY
             if (childCount > 0) {
                 val child = getChildAt(0)
                 scrollTo(clamp(x, width - paddingRight - paddingLeft, child.width),
@@ -299,7 +299,7 @@ class BidirectionalScrollView : HorizontalScrollView {
                 mTwoDScrollViewMovedFocus = false
             }
 
-            awakenScrollBars(scroller.getDuration())
+            awakenScrollBars(scroller.duration)
             invalidate()
         }
     }
