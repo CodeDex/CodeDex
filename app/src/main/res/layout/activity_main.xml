@@ -18,7 +18,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/status_bar_height">
+            android:paddingTop="@dimen/materialize_statusbar">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
