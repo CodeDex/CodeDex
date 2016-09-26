@@ -1,5 +1,7 @@
 package com.github.codedex.github.api;
 
+import com.github.codedex.github.models.Commit;
+import com.github.codedex.github.models.Gist;
 import com.github.codedex.github.models.Repo;
 
 import java.util.List;
@@ -21,4 +23,13 @@ public interface GitHubService {
     })
     @GET("users/{user}/repos")
     Call<List<Repo>> listRepos(@Path("user") String user);
+
+    @GET("repos/{user}/{repo}")
+    Call<Repo> repo(@Path("user") String user, @Path("repo") String repo);
+
+    @GET("repos/{user}/{repo}/commits")
+    Call<List<Commit>> repoCommits(@Path("user") String user, @Path("repo") String repo);
+
+    @GET("users/{user}/gists")
+    Call<List<Gist>> listGists(@Path("user") String user);
 }
