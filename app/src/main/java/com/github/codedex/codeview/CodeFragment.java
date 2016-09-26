@@ -7,12 +7,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.codedex.R;
 import com.github.codedex.codeview.highlight.ColorTheme;
 import com.github.codedex.sourceparser.SourceParser;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -69,6 +74,15 @@ public class CodeFragment extends Fragment {
                     }
                 })
                 .highlight(codeView);
+        setHasOptionsMenu(true);
         return rowView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem menuItem = menu.add(0, R.id.menu_show_files, 0, "Files");
+        menuItem.setIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_sort_variant).actionBar().colorRes(R.color.md_black_1000));
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
