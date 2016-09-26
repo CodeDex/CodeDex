@@ -9,8 +9,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.github.codedex.codeview.CodeFragment;
+import com.github.codedex.codeview.highlight.MonoFontCache;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -29,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(new IconicsDrawable(this, CommunityMaterial.Icon.cmd_menu).actionBar());
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        TextView toolbarChildView = (TextView) toolbar.getChildAt(0);
+        toolbarChildView.setTypeface(MonoFontCache.getInstance(this).getTypeface());
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView view = (NavigationView) findViewById(R.id.navigation_view);
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
