@@ -82,7 +82,7 @@ public class SourceParser {
     @Nullable
     private static ByteString nextByteString(Buffer buffer) throws IOException {
         trimNext(buffer);
-        ByteString byteString = null;
+        ByteString byteString;
         long endIndex1 = buffer.indexOf(EMPTY);
         long endIndex2 = buffer.indexOf(LINE_BREAK);
         long endIndex = Math.min(endIndex1, endIndex1);
