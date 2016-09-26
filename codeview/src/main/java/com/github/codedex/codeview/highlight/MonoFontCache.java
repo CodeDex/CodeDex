@@ -14,7 +14,7 @@ import com.github.codedex.codeview.adapters.AbstractCodeAdapter;
  */
 public class MonoFontCache {
 
-    private static final String FONT_NAME = "DroidSansMonoSlashed";
+    private static final String FONT_NAME = "RobotoMono-Regular";
 
     private static volatile MonoFontCache instance;
 
