@@ -25,13 +25,14 @@ public class ImportParser {
         try {
             ArrayList<String> imports = new ArrayList<>();
             long startIndex;
+            long endIndex;
             while ((startIndex = buffer.indexOf(IMPORT_SYNTAX)) != -1) {
                 buffer.skip(startIndex + 6);
-                while (buffer.indexOf(EMPTY) == 0) {
+                while (buffer.rangeEquals(0, EMPTY)) {
                     buffer.skip(1);
                 }
-                long endIndex = buffer.indexOf(IMPORT_END_SYNTAX);
-                imports.add(buffer.readByteString(endIndex).utf8());
+                endIndex = buffer.indexOf(IMPORT_END_SYNTAX);
+                imports.add(buffer.readUtf8(endIndex));
             }
             return imports;
         } catch (IOException io) {
