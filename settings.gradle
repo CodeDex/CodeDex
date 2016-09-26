@@ -1,1 +1,1 @@
-include ':app', ':sourceparser', ':codeview'
+include ':app', ':sourceparser', ':codeview', ':github'
