@@ -3,10 +3,10 @@ package com.github.codedex.sourceparser;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 import okio.Buffer;
+import okio.BufferedSource;
 import okio.ByteString;
 
 /**
@@ -27,10 +27,15 @@ public class SourceParser {
     private static final ByteString BRACKET_CLOSED = ByteString.encodeUtf8("}");
 
     //Todo: only parse public methods?? maybe??
+    //Todo: constructor parser
     //Todo: first imports, then search all classes, parse them, then search all interfaces, parse them, search variables, parse them, search methods, parse them (only the method declaration, not the implementation)
     public static void parse(String sourceCode) {
         Buffer buffer = new Buffer();
         buffer.writeUtf8(sourceCode);
+        parse(buffer);
+    }
+
+    public static void parse(BufferedSource buffer) {
         try {
             int nextType = 0;
             ByteString string;
@@ -76,11 +81,10 @@ public class SourceParser {
             //File end
         }
         Log.d("result", buffer.toString());//should be empty
-
     }
 
     @Nullable
-    private static ByteString nextByteString(Buffer buffer) throws IOException {
+    private static ByteString nextByteString(BufferedSource buffer) throws IOException {
         trimNext(buffer);
         ByteString byteString;
         long endIndex1 = buffer.indexOf(EMPTY);
@@ -96,7 +100,7 @@ public class SourceParser {
         if (endIndex != -1) {
             byteString = buffer.readByteString(endIndex);
         } else {
-            if (buffer.size() > 0) {
+            if (!buffer.exhausted()) {
                 byteString = buffer.readByteString();
             } else {
                 return null;
@@ -106,7 +110,7 @@ public class SourceParser {
         return byteString;
     }
 
-    private static void trimNext(Buffer buffer) throws EOFException {
+    private static void trimNext(BufferedSource buffer) throws IOException {
         while (buffer.rangeEquals(0, EMPTY) || buffer.rangeEquals(0, LINE_BREAK)) {
             buffer.skip(1);
         }
