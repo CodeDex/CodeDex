@@ -19,6 +19,7 @@ public class SourceParser {
     private static final ByteString PACKAGE = ByteString.encodeUtf8("package");
     private static final ByteString IMPORT = ByteString.encodeUtf8("import");
     private static final ByteString CLASS = ByteString.encodeUtf8("class");
+    private static final ByteString INTERFACE = ByteString.encodeUtf8("interface");
     /*syntax*/
     private static final ByteString SEMICOLON = ByteString.encodeUtf8(";");
     private static final ByteString EMPTY = ByteString.encodeUtf8(" ");
@@ -74,6 +75,26 @@ public class SourceParser {
                     }
                     //endIndex = buffer.indexOf(BRACKET_CLOSED);
                     //Log.d("class_impl", buffer.readUtf8(endIndex));
+                } else if(string.equals(INTERFACE)) {
+                    nextType = 2;
+                    long endIndex = buffer.indexOf(BRACKET_OPENED);
+                    Log.d("interface", buffer.readUtf8(endIndex));
+                    buffer.skip(1);//bracket
+
+                    trimNext(buffer);
+                    int opened = 0;
+                    while ((string = nextByteString(buffer)) != null) {
+                        Log.d("interface_imp_log", string.utf8());
+                        if(string.equals(BRACKET_OPENED)) {
+                            opened++;
+                        }
+                        if (string.equals(BRACKET_CLOSED)) {
+                            if(opened == 0) {
+                                break;
+                            }
+                            opened--;
+                        }
+                    }
                 }
                 trimNext(buffer);
             }
