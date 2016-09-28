@@ -15,19 +15,13 @@ import android.view.ViewGroup;
 
 import com.github.codedex.R;
 import com.github.codedex.codeview.highlight.ColorTheme;
-import com.github.codedex.sourceparser.SourceParser;
+import com.github.codedex.codeview.views.GestureRecyclerView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.lang.ref.WeakReference;
 
 /**
  * Show source code from source file
@@ -48,7 +42,7 @@ public class CodeFragment extends Fragment {
             "import android.view.MenuItem;\n" +
             "\n" +
             "import com.github.codedex.codeview.CodeFragment;\n" +
-            "import com.mikepenz.community_material_typeface_library.CommunityMaterialaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;\n" +
+            "import com.mikepenz.community_material_typeface_library.CommunityMaterialaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaz;\n" +
             "import com.mikepenz.iconics.IconicsDrawable;\n" +
             "\n" +
             "public class MainActivity extends AppCompatActivity {\n" +
@@ -60,35 +54,20 @@ public class CodeFragment extends Fragment {
             "    }\n" +
             "}";
 
+    private CodeView codeView;
+
+    private Context context;
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rowView = inflater.inflate(R.layout.fragment_code_view, container, false);
-        Context context = getActivity();
-        CodeView codeView = (CodeView) rowView.findViewById(R.id.code_view);
+        context = getActivity();
+        codeView = (CodeView) rowView.findViewById(R.id.code_view);
         codeView.getRecyclerView().setFitsSystemWindows(true);
-        SourceParser.parse(TEST_CODE);
-
-        OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder()
-                .url("https://raw.githubusercontent.com/FabianTerhorst/Floppy/master/library/src/main/java/io/fabianterhorst/floppy/ArrayDisk.java")
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                SourceParser.parse(response.body().source());
-            }
-        });
-
-        //ImportParser.parseImports(TEST_CODE);
-        String code = TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE;
+        ((GestureRecyclerView) codeView.getRecyclerView()).setWindow(new WeakReference<>(getActivity().getWindow()));
         new Highlighter(context)
-                .code(code)
+                .code(TEST_CODE)
                 .language("java")
                 .theme(ColorTheme.DEFAULT.withBgContent(ContextCompat.getColor(context, R.color.md_white_1000)))
                 .lineClickListener(new OnCodeLineClickListener() {

@@ -1,12 +1,10 @@
 package com.github.codedex.codeview
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.widget.RelativeLayout
-import com.github.codedex.codeview.Thread.delayed
 import com.github.codedex.codeview.adapters.AbstractCodeAdapter
 import com.github.codedex.codeview.adapters.CodeWithNotesAdapter
 
@@ -46,32 +44,32 @@ open class CodeView : RelativeLayout {
      */
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         val defaultAlpha = 0.7531f
-        var animateOnStart = true
+        //var animateOnStart = true
 
-        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.CodeView, 0, 0)
-        try {
+       // val a = context.theme.obtainStyledAttributes(attrs, R.styleable.CodeView, 0, 0)
+        /*try {
             animateOnStart = a.getBoolean(R.styleable.CodeView_animateOnStart, animateOnStart)
         } finally {
             a.recycle()
-        }
-        animateOnStart = animateOnStart && visibility == View.VISIBLE
+        }*/
+        //animateOnStart = animateOnStart && visibility == View.VISIBLE
 
-        alpha = if (animateOnStart) 0f else defaultAlpha
+        //alpha = if (animateOnStart) 0f else defaultAlpha
 
         inflate(context, R.layout.layout_code_view, this)
 
-        if (animateOnStart) {
+        /*if (animateOnStart) {
             animate().setDuration(Utils.DELAY * 5)
                     .alpha(defaultAlpha)
-        }
+        }*/
 
         vShadowRight = findViewById(R.id.v_shadow_right)//todo: shadow color customization
         vShadowBottomLine = findViewById(R.id.v_shadow_bottom_line)//todo: shadow color customization
         vShadowBottomContent = findViewById(R.id.v_shadow_bottom_content)//todo: shadow color customization
 
         vCodeList = findViewById(R.id.rv_code_content) as RecyclerView
-        vCodeList.layoutManager = LinearLayoutManager(context)
-        vCodeList.isNestedScrollingEnabled = true
+        vCodeList.layoutManager = CodeLayoutManager(context)
+        //vCodeList.isNestedScrollingEnabled = true
     }
 
     /**
@@ -83,6 +81,7 @@ open class CodeView : RelativeLayout {
             throw IllegalStateException("Please set code() before init/highlight")
         }
 
+        adapter.setHasStableIds(true)
         vCodeList.adapter = adapter
 
         setupShadows(adapter.highlighter.shadows)
@@ -116,13 +115,13 @@ open class CodeView : RelativeLayout {
         }
 
         getAdapter()?.highlight() {
-            animate().setDuration(Utils.DELAY * 2)
+            /*animate().setDuration(Utils.DELAY * 2)
                     .alpha(.1f)
 
             delayed {
-                animate().alpha(1f)
+                animate().alpha(1f)*/
                 vCodeList.adapter?.notifyDataSetChanged()
-            }
+            //}
         }
     }
 
@@ -161,6 +160,15 @@ open class CodeView : RelativeLayout {
         vShadowRight.visibility = visibility
         vShadowBottomLine.visibility = visibility
         vShadowBottomContent.visibility = visibility
+    }
+
+    override fun measureChild(child: View, parentWidthMeasureSpec: Int, parentHeightMeasureSpec: Int) {
+        val childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        child.measure(childWidthMeasureSpec, parentHeightMeasureSpec)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), heightMeasureSpec)
     }
 }
 

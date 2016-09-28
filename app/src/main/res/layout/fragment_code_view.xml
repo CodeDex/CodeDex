@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.github.codedex.codeview.CodeView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/code_view"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:background="@color/md_white_1000"
     android:layout_marginTop="@dimen/status_bar_height_neg"/>
