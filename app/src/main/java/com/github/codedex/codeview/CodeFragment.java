@@ -70,7 +70,6 @@ public class CodeFragment extends Fragment {
                 .lineClickListener(new OnCodeLineClickListener() {
                     @Override
                     public void onLineClicked(int n, @NotNull String line) {
-                        line = line.replaceAll("<[^>]*>", "");
                         Log.d("line click", n + ":line " + line);
                     }
                 })
