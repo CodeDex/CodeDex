@@ -55,9 +55,9 @@ import java.util.regex.Pattern;
 
 /**
  * This is similar to the prettify.js in JavaScript Prettify.
- * 
+ *
  * All comments are adapted from the JavaScript Prettify.
- * 
+ *
  * <p>
  * Some functions for browser-side pretty printing of code contained in html.
  * </p>
@@ -860,7 +860,7 @@ public class Prettify {
   }
 
   /**
-   * Get the parser for the extension specified. 
+   * Get the parser for the extension specified.
    * @param extension the file extension, if null, default parser will be returned
    * @param source the source code
    * @return the parser
