@@ -1,12 +1,10 @@
 package com.github.codedex.codeview
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.view.View
-import android.widget.RelativeLayout
 import com.github.codedex.codeview.adapters.AbstractCodeAdapter
 import com.github.codedex.codeview.adapters.CodeWithNotesAdapter
+import com.github.codedex.codeview.views.GestureRecyclerView
 
 /**
  * @class CodeView
@@ -24,51 +22,13 @@ import com.github.codedex.codeview.adapters.CodeWithNotesAdapter
  * This helps to avoid errors & solve the init tasks in more elegant way.
  *
  */
-open class CodeView : RelativeLayout {
-
-    private val vShadowRight: View
-    private val vShadowBottomLine: View
-    private val vShadowBottomContent: View
-
-    /**
-     * Core view to draw code by lines.
-     */
-    private val vCodeList: RecyclerView
-
-    fun getRecyclerView(): RecyclerView {
-        return vCodeList
-    }
+open class CodeView : GestureRecyclerView {
 
     /**
      * Default constructor.
      */
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        val defaultAlpha = 0.7531f
-        //var animateOnStart = true
-
-       // val a = context.theme.obtainStyledAttributes(attrs, R.styleable.CodeView, 0, 0)
-        /*try {
-            animateOnStart = a.getBoolean(R.styleable.CodeView_animateOnStart, animateOnStart)
-        } finally {
-            a.recycle()
-        }*/
-        //animateOnStart = animateOnStart && visibility == View.VISIBLE
-
-        //alpha = if (animateOnStart) 0f else defaultAlpha
-
-        inflate(context, R.layout.layout_code_view, this)
-
-        /*if (animateOnStart) {
-            animate().setDuration(Utils.DELAY * 5)
-                    .alpha(defaultAlpha)
-        }*/
-
-        vShadowRight = findViewById(R.id.v_shadow_right)//todo: shadow color customization
-        vShadowBottomLine = findViewById(R.id.v_shadow_bottom_line)//todo: shadow color customization
-        vShadowBottomContent = findViewById(R.id.v_shadow_bottom_content)//todo: shadow color customization
-
-        vCodeList = findViewById(R.id.rv_code_content) as RecyclerView
-        vCodeList.layoutManager = CodeLayoutManager(context)
+        layoutManager = CodeLayoutManager(context)
         //vCodeList.isNestedScrollingEnabled = true
     }
 
@@ -82,9 +42,7 @@ open class CodeView : RelativeLayout {
         }
 
         adapter.setHasStableIds(true)
-        vCodeList.adapter = adapter
-
-        setupShadows(adapter.highlighter.shadows)
+        this.adapter = adapter
 
         highlight()
     }
@@ -110,18 +68,12 @@ open class CodeView : RelativeLayout {
      * It holds the placeholder on the view until code is highlighted.
      */
     fun highlight() {
-        if (vCodeList.adapter == null) {
+        if (this.adapter == null) {
             throw IllegalStateException("Please set adapter or use init(highlighter) before highlight()")
         }
 
-        getAdapter()?.highlight() {
-            /*animate().setDuration(Utils.DELAY * 2)
-                    .alpha(.1f)
-
-            delayed {
-                animate().alpha(1f)*/
-                vCodeList.adapter?.notifyDataSetChanged()
-            //}
+        getCodeAdapter()?.highlight() {
+            this.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -129,42 +81,23 @@ open class CodeView : RelativeLayout {
      * Remove code listener.
      */
     fun removeLineClickListener() {
-        getAdapter()?.highlighter?.lineClickListener = null
+        getCodeAdapter()?.highlighter?.lineClickListener = null
     }
 
-    fun getAdapter() = vCodeList.adapter as? AbstractCodeAdapter<*>
+    fun getCodeAdapter() = this.adapter as? AbstractCodeAdapter<*>
 
     /**
      * Update code.
      */
     fun update(code: String) {
-        getAdapter()?.updateCode(code)
+        getCodeAdapter()?.updateCode(code)
     }
 
     /**
      * Update code.
      */
     fun update(h: Highlighter) {
-        init(getAdapter()!!.highlighter.update(h))
-    }
-
-    // - Setup actions
-
-    /**
-     * Border shadows will shown if presented full code listing.
-     * It helps user to see what part of code are scrolled & hidden.
-     */
-    private fun setupShadows(shadows: Boolean) {
-        val visibility = if (shadows) VISIBLE else GONE
-
-        vShadowRight.visibility = visibility
-        vShadowBottomLine.visibility = visibility
-        vShadowBottomContent.visibility = visibility
-    }
-
-    override fun measureChild(child: View, parentWidthMeasureSpec: Int, parentHeightMeasureSpec: Int) {
-        val childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-        child.measure(childWidthMeasureSpec, parentHeightMeasureSpec)
+        init(getCodeAdapter()!!.highlighter.update(h))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
