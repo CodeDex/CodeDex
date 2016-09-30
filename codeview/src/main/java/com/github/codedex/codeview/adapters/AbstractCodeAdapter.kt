@@ -318,10 +318,6 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
         return 1
     }
 
-    companion object {
-        internal const val MAX_SHORTCUT_LINES = 6
-    }
-
     /**
      * View holder for code adapter.
      * Stores all views related to code line layout.
