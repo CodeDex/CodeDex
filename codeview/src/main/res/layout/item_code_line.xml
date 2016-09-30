@@ -9,8 +9,7 @@
         android:layout_height="@dimen/line_height"
         android:gravity="center"
         android:fontFamily="monospace"
-        android:textSize="@dimen/line_text_size"
-        android:text="@string/stub_line_num"/>
+        android:textSize="@dimen/line_text_size"/>
 
     <TextView
         android:id="@+id/tv_line_content"
@@ -23,8 +22,7 @@
         android:fontFamily="monospace"
         android:singleLine="true"
         android:maxLines="1"
-        android:textSize="@dimen/line_text_size"
-        android:text="@string/stub_line_content"/>
+        android:textSize="@dimen/line_text_size"/>
 
     <LinearLayout
         android:id="@+id/ll_line_footer"
@@ -46,7 +44,6 @@
         android:layout_height="@dimen/line_height"
         android:fontFamily="monospace"
         android:gravity="center"
-        android:text="@string/stub_line_num"
         android:textSize="@dimen/line_text_size" />
 
     <LinearLayout
@@ -64,7 +61,6 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="@string/stub_line_content"
             android:textSize="@dimen/line_text_size" />
 
         <LinearLayout

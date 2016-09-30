@@ -10,10 +10,6 @@ data class Highlighter(val context: Context) {
     var code = ""
     var language: String? = null
     var codeResId = 0
-    var shortcut = false
-    var maxLines = 0
-    var shortcutNote: String? = null
-    var shortcutNoteResId = 0
     var lineClickListener: OnCodeLineClickListener? = null
 
     // - updated
@@ -22,10 +18,6 @@ data class Highlighter(val context: Context) {
     var codeUpdated = false
     var languageUpdated = false
     var codeResIdUpdated = false
-    var shortcutUpdated = false
-    var maxLinesUpdated = false
-    var shortcutNoteUpdated = false
-    var shortcutNoteResIdUpdated = false
     var lineClickListenerUpdated = false
 
     fun language(language: String): Highlighter {
@@ -43,30 +35,6 @@ data class Highlighter(val context: Context) {
     fun code(codeResId: Int): Highlighter {
         this.code = context.getString(codeResId)
         codeResIdUpdated = true
-        return this
-    }
-
-    fun shortcut(shortcut: Boolean): Highlighter {
-        this.shortcut = shortcut
-        shortcutUpdated = true
-        return this
-    }
-
-    fun maxLines(maxLines: Int): Highlighter {
-        this.maxLines = maxLines
-        maxLinesUpdated = true
-        return this
-    }
-
-    fun shortcutNote(shortcutNote: String): Highlighter {
-        this.shortcutNote = shortcutNote
-        shortcutNoteUpdated = true
-        return this
-    }
-
-    fun shortcutNote(shortcutNoteResId: Int): Highlighter {
-        this.shortcutNote = context.getString(shortcutNoteResId)
-        shortcutNoteResIdUpdated = true
         return this
     }
 
@@ -108,18 +76,6 @@ data class Highlighter(val context: Context) {
         }
         if (newSettings.codeResIdUpdated) {
             codeResId = newSettings.codeResId
-        }
-        if (newSettings.shortcutUpdated) {
-            shortcut = newSettings.shortcut
-        }
-        if (newSettings.maxLinesUpdated) {
-            maxLines = newSettings.maxLines
-        }
-        if (newSettings.shortcutNoteUpdated) {
-            shortcutNote = newSettings.shortcutNote
-        }
-        if (newSettings.shortcutNoteResIdUpdated) {
-            shortcutNoteResId = newSettings.shortcutNoteResId
         }
         if (newSettings.lineClickListenerUpdated) {
             lineClickListener = newSettings.lineClickListener

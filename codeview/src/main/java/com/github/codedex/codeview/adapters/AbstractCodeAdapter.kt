@@ -34,7 +34,6 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
 
     protected var lines: List<String> = ArrayList() //items
     protected var spannable: List<Spanned> = ArrayList<Spanned>() //items
-    protected var droppedLines: List<String>? = null
 
     private var footerEntities: HashMap<Int, List<T>> = HashMap()
 
@@ -58,25 +57,17 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
     constructor(context: Context,
                 content: String,
                 theme: ColorThemeData,
-                isShowFull: Boolean = true,
-                maxLines: Int = MAX_SHORTCUT_LINES,
-                shortcutNote: String = context.getString(R.string.show_all),
                 listener: OnCodeLineClickListener? = null) {
         this.context = context
 
         highlighter = Highlighter(context)
 
         highlighter.code = content
-        highlighter.maxLines = maxLines
         highlighter.lineClickListener = listener
         highlighter.theme = theme
-        highlighter.shortcut = !isShowFull
-        highlighter.shortcutNote = shortcutNote
 
         prepareCodeLines()
     }
-
-    fun isShorted(): Boolean = droppedLines != null
 
     //todo: showAllNotes()
 
@@ -87,21 +78,7 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
     internal fun prepareCodeLines() {
         async() {
             val allLines = extractLines(highlighter.code)
-            val isFullShowing = !highlighter.shortcut || allLines.size <= highlighter.maxLines // limit is not reached
-
-            if (isFullShowing) {
-                lines = allLines
-            } else {
-                val resultLines = ArrayList(allLines.subList(0, highlighter.maxLines))
-
-                if (!isFullShowing) {
-                    droppedLines = ArrayList(allLines.subList(highlighter.maxLines, allLines.lastIndex))
-                    if (highlighter.shortcutNote != null) {
-                        resultLines.add(highlighter.shortcutNote!!.toUpperCase())
-                    }
-                }
-                lines = resultLines
-            }
+            lines = allLines
 
             ui() {
                 notifyDataSetChanged()
@@ -296,13 +273,8 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
         }
         holder.tvLineContent.setTextColor(highlighter.theme.noteColor.color())
 
-        if (highlighter.shortcut && position == MAX_SHORTCUT_LINES) {
-            holder.tvLineNum.textSize = 10f
-            holder.tvLineNum.text = context.getString(R.string.dots)
-        } else {
-            holder.tvLineNum.textSize = 12f
-            holder.tvLineNum.text = "${position + 1}"
-        }
+        holder.tvLineNum.textSize = 12f
+        holder.tvLineNum.text = "${position + 1}"
     }
 
     private fun displayLineFooter(position: Int, holder: ViewHolder) {
