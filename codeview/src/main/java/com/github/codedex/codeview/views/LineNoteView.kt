@@ -10,7 +10,6 @@ import com.github.codedex.codeview.dpToPx
  *
  * Note view for code line. Default footer view.
  *
- * @author Kirill Biakov
  */
 class LineNoteView(context: Context?) : TextView(context) {
 
