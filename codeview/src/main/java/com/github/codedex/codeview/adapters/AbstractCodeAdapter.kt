@@ -167,7 +167,9 @@ abstract class AbstractCodeAdapter<T> : RecyclerView.Adapter<AbstractCodeAdapter
         //todo: !!!performance (1) highlight next 10 then repeat (1)
         val code = CodeHighlighter.highlight(language, highlighter.code, highlighter.theme)
         spannable = code.spannable
-        updateContent(code.code, onReady)
+        ui {
+            onReady()
+        }
     }
 
     /**
