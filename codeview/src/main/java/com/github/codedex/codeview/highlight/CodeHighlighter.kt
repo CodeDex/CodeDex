@@ -1,8 +1,10 @@
 package com.github.codedex.codeview.highlight
 
 import android.graphics.Color
+import android.text.Spanned
 import com.github.codedex.codeview.highlight.parser.ParseResult
 import com.github.codedex.codeview.highlight.prettify.PrettifyParser
+import com.github.codedex.codeview.html
 import java.util.*
 
 /**
@@ -18,6 +20,8 @@ object CodeHighlighter {
 
     private val parser = PrettifyParser()
 
+    class HighlightResult(var code: String, var spannable: List<Spanned>)
+
     /**
      * Highlight code content.
      *
@@ -26,7 +30,7 @@ object CodeHighlighter {
      * @param colorTheme Color theme (see below)
      * @return Highlighted code, string with necessary inserted color tags
      */
-    fun highlight(codeLanguage: String, rawSource: String, colorTheme: ColorThemeData): String {
+    fun highlight(codeLanguage: String, rawSource: String, colorTheme: ColorThemeData): HighlightResult {
         val source = rawSource.escapeLT()
         val results = parser.parse(codeLanguage, source)
         val colorsMap = buildColorsMap(colorTheme)
@@ -35,10 +39,19 @@ object CodeHighlighter {
         results.forEach { result ->
             val color = colorsMap.getColor(result)
             val content = parseContent(source, result)
+
             highlighted.append(content.withFontParams(color))
         }
 
-        return highlighted.toString()
+        val strings = highlighted.toString()
+
+        val list = strings.replace("  ", "<pre>&nbsp;&nbsp;</pre>").split('\n')
+
+        val spans = ArrayList<Spanned>()
+        for (span in list) {
+            spans.add(html(span))
+        }
+        return HighlightResult(strings, spans)
     }
 
     // - Helpers
