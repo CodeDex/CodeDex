@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference
  * Created by fabianterhorst on 27.09.16.
  */
 
-class GestureRecyclerView(context: Context, attributes: AttributeSet) : RecyclerView(context, attributes), GestureDetector.OnGestureListener {
+open class GestureRecyclerView(context: Context, attributes: AttributeSet) : RecyclerView(context, attributes), GestureDetector.OnGestureListener {
 
     var window: WeakReference<Window>? = null
 
