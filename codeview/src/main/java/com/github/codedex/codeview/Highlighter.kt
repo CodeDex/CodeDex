@@ -15,7 +15,6 @@ data class Highlighter(val context: Context) {
     var shortcutNote: String? = null
     var shortcutNoteResId = 0
     var lineClickListener: OnCodeLineClickListener? = null
-    var shadows = false
 
     // - updated
 
@@ -28,7 +27,6 @@ data class Highlighter(val context: Context) {
     var shortcutNoteUpdated = false
     var shortcutNoteResIdUpdated = false
     var lineClickListenerUpdated = false
-    var shadowsUpdated = true
 
     fun language(language: String): Highlighter {
         this.language = language
@@ -88,12 +86,6 @@ data class Highlighter(val context: Context) {
         return this
     }
 
-    fun shadows(shadows: Boolean = true): Highlighter {
-        this.shadows = shadows
-        shadowsUpdated = true
-        return this
-    }
-
     /**
      * Highlight code finally.
      */
@@ -131,9 +123,6 @@ data class Highlighter(val context: Context) {
         }
         if (newSettings.lineClickListenerUpdated) {
             lineClickListener = newSettings.lineClickListener
-        }
-        if (newSettings.shadowsUpdated) {
-            shadows = newSettings.shadows
         }
 
         return this
