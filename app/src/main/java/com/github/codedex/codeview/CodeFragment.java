@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.github.codedex.R;
 import com.github.codedex.codeview.highlight.ColorTheme;
-import com.github.codedex.codeview.views.GestureRecyclerView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -54,20 +53,18 @@ public class CodeFragment extends Fragment {
             "    }\n" +
             "}";
 
-    private CodeView codeView;
-
-    private Context context;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rowView = inflater.inflate(R.layout.fragment_code_view, container, false);
-        context = getActivity();
-        codeView = (CodeView) rowView.findViewById(R.id.code_view);
-        codeView.getRecyclerView().setFitsSystemWindows(true);
-        ((GestureRecyclerView) codeView.getRecyclerView()).setWindow(new WeakReference<>(getActivity().getWindow()));
+        Context context = getActivity();
+        CodeView codeView = (CodeView) rowView.findViewById(R.id.code_view);
+        codeView.setFitsSystemWindows(true);
+        codeView.setClipToPadding(false);
+        codeView.setHasFixedSize(true);
+        codeView.setWindow(new WeakReference<>(getActivity().getWindow()));
         new Highlighter(context)
-                .code(TEST_CODE)
+                .code(TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE)
                 .language("java")
                 .theme(ColorTheme.DEFAULT.withBgContent(ContextCompat.getColor(context, R.color.md_white_1000)))
                 .lineClickListener(new OnCodeLineClickListener() {
