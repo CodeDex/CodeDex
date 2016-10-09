@@ -43,9 +43,9 @@ open class CodeView
             val code = CodeHighlighter.highlight(highlighter.language!!, highlighter.code, highlighter.theme)
             for ((index,spannable) in code.spannable.withIndex()) {
                 fastItemAdapter.getItem(index).spannable = spannable
-                Thread.ui {
-                    fastItemAdapter.notifyAdapterItemChanged(index)
-                }
+            }
+            Thread.ui {
+                fastItemAdapter.notifyAdapterDataSetChanged()
             }
         }
     }
