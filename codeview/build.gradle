@@ -35,4 +35,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.squareup.okio:okio:1.10.0'
+    compile('com.mikepenz:fastadapter:2.0.0.b2-SNAPSHOT@aar') {
+        transitive = true
+    }
+    compile 'com.mikepenz:materialize:1.0.0@aar'
 }

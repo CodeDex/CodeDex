@@ -10,15 +10,10 @@ data class Highlighter(val context: Context) {
     var code = ""
     var language: String? = null
     var codeResId = 0
-    var lineClickListener: OnCodeLineClickListener? = null
-
-    // - updated
-
     var themeUpdated = false
     var codeUpdated = false
     var languageUpdated = false
     var codeResIdUpdated = false
-    var lineClickListenerUpdated = false
 
     fun language(language: String): Highlighter {
         this.language = language
@@ -48,12 +43,6 @@ data class Highlighter(val context: Context) {
         return this
     }
 
-    fun lineClickListener(listener: OnCodeLineClickListener): Highlighter {
-        lineClickListener = listener
-        lineClickListenerUpdated = true
-        return this
-    }
-
     /**
      * Highlight code finally.
      */
@@ -76,9 +65,6 @@ data class Highlighter(val context: Context) {
         }
         if (newSettings.codeResIdUpdated) {
             codeResId = newSettings.codeResId
-        }
-        if (newSettings.lineClickListenerUpdated) {
-            lineClickListener = newSettings.lineClickListener
         }
 
         return this

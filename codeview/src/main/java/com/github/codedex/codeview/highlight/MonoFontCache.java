@@ -3,14 +3,12 @@ package com.github.codedex.codeview.highlight;
 import android.content.Context;
 import android.graphics.Typeface;
 
-import com.github.codedex.codeview.adapters.AbstractCodeAdapter;
 
 /**
  * @class MonoFontCache
  *
  * Simple font cache.
  *
- * @see AbstractCodeAdapter
  */
 public class MonoFontCache {
 

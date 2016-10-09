@@ -1,42 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><!--<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/tv_line_num"
-        android:layout_width="@dimen/line_num_width"
-        android:layout_height="@dimen/line_height"
-        android:gravity="center"
-        android:fontFamily="monospace"
-        android:textSize="@dimen/line_text_size"/>
-
-    <TextView
-        android:id="@+id/tv_line_content"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/line_height"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toRightOf="@+id/tv_line_num"
-        android:gravity="center_vertical"
-        android:fontFamily="monospace"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:textSize="@dimen/line_text_size"/>
-
-    <LinearLayout
-        android:id="@+id/ll_line_footer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tv_line_content"
-        android:orientation="vertical"
-        android:visibility="gone"/>
-
-</RelativeLayout>-->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/md_white_1000">
 
     <TextView
         android:id="@+id/tv_line_num"
@@ -44,6 +11,8 @@
         android:layout_height="@dimen/line_height"
         android:fontFamily="monospace"
         android:gravity="center"
+        android:textColor="#99A8B7"
+        android:background="#F2F2F6"
         android:textSize="@dimen/line_text_size" />
 
     <LinearLayout
@@ -59,6 +28,7 @@
             android:layout_marginRight="16dp"
             android:fontFamily="monospace"
             android:gravity="center_vertical"
+            android:textColor="#4C5D6E"
             android:maxLines="1"
             android:singleLine="true"
             android:textSize="@dimen/line_text_size" />

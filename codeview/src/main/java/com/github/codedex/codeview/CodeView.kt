@@ -2,9 +2,10 @@ package com.github.codedex.codeview
 
 import android.content.Context
 import android.util.AttributeSet
-import com.github.codedex.codeview.adapters.AbstractCodeAdapter
-import com.github.codedex.codeview.adapters.CodeWithNotesAdapter
+import com.github.codedex.codeview.highlight.CodeHighlighter
+import com.github.codedex.codeview.items.CodeLineItem
 import com.github.codedex.codeview.views.GestureRecyclerView
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 
 /**
  * @class CodeView
@@ -22,92 +23,38 @@ import com.github.codedex.codeview.views.GestureRecyclerView
  * This helps to avoid errors & solve the init tasks in more elegant way.
  *
  */
-open class CodeView : GestureRecyclerView {
+open class CodeView
 
-    /**
-     * Default constructor.
-     */
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        layoutManager = CodeLayoutManager(context)
-        //vCodeList.isNestedScrollingEnabled = true
-    }
+(context: Context, attrs: AttributeSet) : GestureRecyclerView(context, attrs) {
 
     /**
      * Initialize RecyclerView with adapter
      * then start highlighting
      */
-    fun init(h: Highlighter, adapter: AbstractCodeAdapter<*>) {
-        if (h.code.isEmpty()) {
-            throw IllegalStateException("Please set code() before init/highlight")
+    fun init(highlighter: Highlighter) {
+        val fastItemAdapter = FastItemAdapter<CodeLineItem>()
+        this.adapter = fastItemAdapter
+        Thread.async() {
+            val allLines = extractLines(highlighter.code)
+            val items = allLines.map { CodeLineItem(it) }
+            Thread.ui {
+                fastItemAdapter.setNewList(items)
+            }
+            val code = CodeHighlighter.highlight(highlighter.language!!, highlighter.code, highlighter.theme)
+            for ((index,spannable) in code.spannable.withIndex()) {
+                fastItemAdapter.getItem(index).spannable = spannable
+                Thread.ui {
+                    fastItemAdapter.notifyAdapterItemChanged(index)
+                }
+            }
         }
-
-        adapter.setHasStableIds(true)
-        this.adapter = adapter
-
-        highlight()
-    }
-
-    /**
-     * Initialize RecyclerView with adapter
-     * then start highlighting
-     */
-    fun init(adapter: AbstractCodeAdapter<*>) {
-        init(adapter.highlighter, adapter)
-    }
-
-    /**
-     * Initialize RecyclerView with adapter
-     * then start highlighting
-     */
-    fun init(h: Highlighter) {
-        init(h, CodeWithNotesAdapter(context, h))
-    }
-
-    /**
-     * Highlight code by defined programming language.
-     * It holds the placeholder on the view until code is highlighted.
-     */
-    fun highlight() {
-        if (this.adapter == null) {
-            throw IllegalStateException("Please set adapter or use init(highlighter) before highlight()")
-        }
-
-        getCodeAdapter()?.highlight() {
-            this.adapter?.notifyDataSetChanged()
-        }
-    }
-
-    /**
-     * Remove code listener.
-     */
-    fun removeLineClickListener() {
-        getCodeAdapter()?.highlighter?.lineClickListener = null
-    }
-
-    fun getCodeAdapter() = this.adapter as? AbstractCodeAdapter<*>
-
-    /**
-     * Update code.
-     */
-    fun update(code: String) {
-        getCodeAdapter()?.updateCode(code)
-    }
-
-    /**
-     * Update code.
-     */
-    fun update(h: Highlighter) {
-        init(getCodeAdapter()!!.highlighter.update(h))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), heightMeasureSpec)
     }
-}
 
-/**
- * Provides listener to code line clicks.
- */
-interface OnCodeLineClickListener {
-    fun onLineClicked(n: Int, line: String)
+    init {
+        layoutManager = CodeLayoutManager(context)
+    }
 }
