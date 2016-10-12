@@ -57,6 +57,7 @@ public class MetaContainer {
             });
     }
 
+    // Test
     // When calling this constructor, make sure you declare the parent package some point later
     public MetaContainer(@NonNull Type type, @NonNull String name) {
         this(type, name, new ParentReference() {
