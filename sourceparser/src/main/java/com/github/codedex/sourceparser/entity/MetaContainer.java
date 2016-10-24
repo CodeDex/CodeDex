@@ -3,141 +3,83 @@ package com.github.codedex.sourceparser.entity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.github.codedex.sourceparser.exception.ChildTypeException;
+
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Contains metadata for package.
+ * Abstract class for container for any metadata, f.e. source code in the example of
+ * MetaClass or other MetaContainers in MetaPackage.
  */
 
-public class MetaContainer {
+public abstract class MetaContainer {
 
-    private ParentReference data;
-
-    public interface ParentReference {
-        MetaContainer getParentPackage();
-    }
-
-    public enum Type {
-        PACKAGE,
-        CLASS,
-        INTERFACE
-    }
-
-    private final Type type;
-    private String name;
-    private List<MetaContainer> packages;
-    private List<MetaContainer> classes;
-    private List<MetaContainer> interfaces;
-    private URL docURL;
-
-    public void setData(ParentReference data) {
-        this.data = data;
-    }
-
-    /**
-     * Method for getting an instance of a root container for MetaInheritables
-     */
-    public static @NonNull MetaContainer getNewRootPackage() {
-        return new MetaContainer();
-    }
-
-    private MetaContainer() {
-        this.type = Type.PACKAGE;
-        this.name = null;
-        this.packages = new ArrayList<>();
-        this.classes = new ArrayList<>();
-        this.interfaces = new ArrayList<>();
-        setData(new ParentReference() {
-                @Override
-                public MetaContainer getParentPackage() {
-                    return null;
-                }
-            });
-    }
-
-    // Test
-    // When calling this constructor, make sure you declare the parent package some point later
-    public MetaContainer(@NonNull Type type, @NonNull String name) {
-        this(type, name, new ParentReference() {
-            @Override
-            public MetaContainer getParentPackage() {
-                return null;
-            }
-        });
-    }
-
-    public MetaContainer(@NonNull Type type, @NonNull String name, @Nullable URL docURL) {// When calling this constructor, make sure you declare the parent package some point later
-        this(type, name, new ParentReference() {
-            @Override
-            public MetaContainer getParentPackage() {
-                return null;
-            }
-        }, docURL);
-    }
-
-    public MetaContainer(@NonNull Type type, @NonNull String name, @NonNull ParentReference data) {
-        this(type, name, data, null);
-    }
-
-    public MetaContainer(@NonNull Type type, @NonNull String name, @NonNull ParentReference data, @Nullable URL docURL) {
-        this.type = type;
+    public MetaContainer(@NonNull String name, @NonNull ParentReferrer parentRef, Type... acceptedChildTypes) {
         this.name = name;
-        this.packages = new ArrayList<>();
-        this.classes = new ArrayList<>();
-        this.interfaces = new ArrayList<>();
-        this.docURL = docURL;
-        setData(data);
-        this.data.getParentPackage().addChild(this);
+
+        this.parentRef = parentRef;
+
+        this.acceptedChildTypes = new HashSet<>();
+        Collections.addAll(this.acceptedChildTypes, acceptedChildTypes);
+
+        this.children = new ArrayList<>();
     }
 
-    public void addChild(@NonNull MetaContainer childContainer) {
-        if (!childContainer.getParentPackage().equals(this)) {
-            childContainer.getParentPackage().removePackage(childContainer);
-            childContainer.setData(new ParentReference() {
-                @Override
-                public MetaContainer getParentPackage() {
-                    return MetaContainer.this;
-                }
-            });
-        }
-        if (!packages.contains(childContainer)) packages.add(childContainer);
+    private final String name;
+    public @NonNull String getName() {
+        return this.name;
     }
 
-    public boolean removePackage(@NonNull MetaContainer childPackage) {
-        return packages.remove(childPackage);
-    }
-
+    private URL docURL;
     public void setDocURL(URL docURL) {
         this.docURL = docURL;
     }
-
-    public URL getDocURL() {
-        return docURL;
+    public @Nullable URL getDocURL() {
+        return this.docURL;
     }
 
-    public boolean containsPackage(@NonNull MetaContainer childPackage) {
-        return packages.contains(childPackage);
+    private ParentReferrer parentRef;
+    public MetaContainer getParent() {
+        return parentRef.getParent();
+    }
+    public interface ParentReferrer {
+        @NonNull MetaContainer getParent(); // This is gonna be a package most in the cases, but sometimes classes are nested in f.e. classes... maybe worth researching, !4!
     }
 
-    public List<MetaContainer> getChildPackages() {     // Use Type enum for param, generalize method
-        return packages;
+    private Set<Type> acceptedChildTypes;
+    public Set<Type> getAcceptedChildTypes() {
+        return acceptedChildTypes;
+    }
+    private List<MetaContainer> children;
+    public void addChild(MetaContainer... children) {
+        List<MetaContainer> errorChildStack = new ArrayList<>();
+        for (MetaContainer child : children)
+            if (acceptedChildTypes.contains(child.getType()))
+                this.children.add(child);
+            else
+                errorChildStack.add(child);
+        if (errorChildStack.size() > 0)
+            throw new ChildTypeException(errorChildStack, getAcceptedChildTypes());
+    }
+    public List<MetaContainer> getChildren(Type... types) {
+        List<MetaContainer> result = new ArrayList<>();
+        for (Type type : types)
+            for (MetaContainer child : this.children)
+                if (type.equals(child.getType()))
+                    result.add(child);
+        return result;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public MetaContainer getParentPackage() {
-        return data.getParentPackage();
-    }
-
-    public boolean isRootPackage() {
-        return this.data.getParentPackage() == null;
-    }
-
-    public Type getType() {
-        return this.type;
-    }
+    public abstract Type getType();
+    public enum Type {
+        PACKAGE,
+        CLASS,
+        INTERFACE,
+        EXCEPTION
+    } // !2! Add annotation as type?
 }
