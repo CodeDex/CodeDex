@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import com.github.codedex.codeview.highlight.CodeHighlighter
 import com.github.codedex.codeview.items.CodeLineItem
 import com.github.codedex.codeview.views.GestureRecyclerView
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 
 /**
  * @class CodeView
@@ -34,9 +34,9 @@ open class CodeView
     fun init(highlighter: Highlighter) {
         val fastItemAdapter = FastItemAdapter<CodeLineItem>()
         this.adapter = fastItemAdapter
-        Thread.async() {
+        Thread.async {
             val allLines = extractLines(highlighter.code)
-            val items = allLines.map { CodeLineItem(it) }
+            val items = allLines.map(::CodeLineItem)
             Thread.ui {
                 fastItemAdapter.setNewList(items)
             }

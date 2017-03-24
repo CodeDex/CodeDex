@@ -1,4 +1,4 @@
-package com.github.codedex.sourceparser.entity;
+package com.github.codedex.sourceparser.entity.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.codedex.sourceparser.entity.OldMetaContainer.Type.PACKAGE;
+import static com.github.codedex.sourceparser.entity.model.OldMetaContainer.Type.PACKAGE;
 
 /**
+ * @deprecated
  * Contains metadata for package.
  */
 

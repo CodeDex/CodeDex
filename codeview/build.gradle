@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
 
@@ -30,13 +30,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:support-core-utils:24.2.1'
+    compile 'com.android.support:support-core-utils:25.2.0'
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.squareup.okio:okio:1.10.0'
-    compile('com.mikepenz:fastadapter:2.0.0.b2-SNAPSHOT@aar') {
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.squareup.okio:okio:1.11.0'
+    compile('com.mikepenz:fastadapter:2.1.7@aar') {
         transitive = true
     }
+    compile 'com.mikepenz:fastadapter-commons:2.1.0@aar'
     compile 'com.mikepenz:materialize:1.0.0@aar'
 }

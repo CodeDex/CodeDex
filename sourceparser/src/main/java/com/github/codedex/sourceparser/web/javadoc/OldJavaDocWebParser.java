@@ -1,6 +1,6 @@
 package com.github.codedex.sourceparser.web.javadoc;
 
-import com.github.codedex.sourceparser.entity.OldMetaContainer;
+import com.github.codedex.sourceparser.entity.model.OldMetaContainer;
 import com.github.codedex.sourceparser.exception.NoJavadocURLException;
 
 import org.jsoup.Jsoup;
@@ -13,14 +13,14 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static com.github.codedex.sourceparser.entity.OldMetaContainer.Type.PACKAGE;
-import static com.github.codedex.sourceparser.entity.OldMetaContainer.createContainer;
+import static com.github.codedex.sourceparser.entity.model.OldMetaContainer.Type.PACKAGE;
+import static com.github.codedex.sourceparser.entity.model.OldMetaContainer.createContainer;
 
 /**
- * Created by IPat (Local) on 24.09.2016.
+ * @deprecated
  */
 
-public class JavaDocWebParser {
+public class OldJavaDocWebParser {
     public static OldMetaContainer getMetaData(URL javadocURL) throws NoJavadocURLException {
 
         OldMetaContainer rootPackage = OldMetaContainer.getNewRootPackage();  // Contains complete metadata about javadocs

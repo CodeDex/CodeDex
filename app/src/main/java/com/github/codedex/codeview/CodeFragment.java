@@ -67,12 +67,15 @@ public class CodeFragment extends Fragment {
                 .code(TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE + TEST_CODE)
                 .language("java")
                 .theme(ColorTheme.DEFAULT.withBgContent(ContextCompat.getColor(context, R.color.md_white_1000)))
+                // TODO: OnCodeLineClickListener (error: cannot find symbol class OnCodeLineClickListener), also lineClickListener method missing
+                /*
                 .lineClickListener(new OnCodeLineClickListener() {
                     @Override
                     public void onLineClicked(int n, @NotNull String line) {
                         Log.d("line click", n + ":line " + line);
                     }
                 })
+                */
                 .highlight(codeView);
         setHasOptionsMenu(true);
         return rowView;

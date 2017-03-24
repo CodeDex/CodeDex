@@ -13,6 +13,8 @@ import java.lang.ref.WeakReference
  * Created by fabianterhorst on 27.09.16.
  */
 
+// Line 80, [...]!!.get()!!.decorView[...] instead of [...]!!.get()..decorView[...]
+
 open class GestureRecyclerView(context: Context, attributes: AttributeSet) : RecyclerView(context, attributes), GestureDetector.OnGestureListener {
 
     var window: WeakReference<Window>? = null
@@ -75,7 +77,7 @@ open class GestureRecyclerView(context: Context, attributes: AttributeSet) : Rec
     }
 
     private fun canScroll(): Int {
-        val dif = width - window!!.get().decorView.width
+        val dif = width - window!!.get()!!.decorView.width
         if (dif <= 0) {
             return 0 //view is smaller then window, no need to scroll
         }
