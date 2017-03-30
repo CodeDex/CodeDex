@@ -1,7 +1,7 @@
 package com.github.codedex.sourceparser.exception;
 
-import com.github.codedex.sourceparser.entity.model.MetaModel;
-import com.github.codedex.sourceparser.entity.model.MetaModel.Type;
+import com.github.codedex.sourceparser.entity.project.model.MetaModel;
+import com.github.codedex.sourceparser.entity.project.model.MetaModel.Type;
 
 import java.util.Set;
 
@@ -10,7 +10,7 @@ import java.util.Set;
  */
 
 /**
- * @deprecated I decided to ignore parent types as a normal javadoc should have regulated that already.
+ * @deprecated I decided to ignore parent type check as a normal javadoc should have regulated that already. (Unregularities in a Javadoc are not the app's problem)
  */
 public class ParentTypeException extends Exception {
 

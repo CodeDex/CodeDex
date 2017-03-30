@@ -1,12 +1,12 @@
 package com.github.codedex.sourceparser.web.javadoc;
 
-import com.github.codedex.sourceparser.entity.MetaClass;
-import com.github.codedex.sourceparser.entity.MetaEnum;
-import com.github.codedex.sourceparser.entity.MetaInterface;
-import com.github.codedex.sourceparser.entity.MetaPackage;
-import com.github.codedex.sourceparser.entity.MetaRoot;
-import com.github.codedex.sourceparser.entity.model.MetaCodeModel;
-import com.github.codedex.sourceparser.entity.model.MetaModel;
+import com.github.codedex.sourceparser.entity.project.MetaClass;
+import com.github.codedex.sourceparser.entity.project.specific.MetaEnum;
+import com.github.codedex.sourceparser.entity.project.MetaInterface;
+import com.github.codedex.sourceparser.entity.project.MetaPackage;
+import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
+import com.github.codedex.sourceparser.entity.project.model.MetaType;
+import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -201,7 +201,7 @@ public class JavaDocParser {
             final int documentEntityTypeEndex = packageEntityNameIndex - 4;
             final String entityTypeAsString = documentEntityDescription.substring(0, documentEntityTypeEndex);
 
-            final MetaCodeModel entity;     // Potentially not necessary. REMOVE IF NOT NEEDED
+            final MetaType entity;     // Potentially not necessary. REMOVE IF NOT NEEDED
             switch (entityTypeAsString) {
                 case "enum":
                     entity = new MetaEnum(documentEntity.text(), packageParentIteratorCache, null);
