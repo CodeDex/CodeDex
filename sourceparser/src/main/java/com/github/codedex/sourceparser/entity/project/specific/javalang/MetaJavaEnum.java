@@ -12,7 +12,7 @@ public final class MetaJavaEnum extends MetaClass {
     private final static MetaJavaEnum SINGLETON = new MetaJavaEnum();
 
     private MetaJavaEnum() {
-        super("Enum", new MetaPackage("lang", new MetaPackage("java")));
+        super("Enum", MetaJavaLangPackage.getMetaPackage());
     }
 
     public static MetaJavaEnum getMetaEnum() {

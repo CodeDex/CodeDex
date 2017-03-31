@@ -23,8 +23,4 @@ public class MetaPackage extends MetaModel {
     public MetaPackage(@NonNull String name) {
         this(name, null);
     }
-
-    public boolean isRoot() {
-        return false;
-    }
 }

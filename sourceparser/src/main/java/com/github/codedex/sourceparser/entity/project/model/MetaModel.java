@@ -79,4 +79,8 @@ public abstract class MetaModel {
                     buffer.add(child);
         return buffer;
     }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
 }
