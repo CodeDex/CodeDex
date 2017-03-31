@@ -27,6 +27,7 @@ android {
     }
     buildTypes {
         release {
+            // Consider enabling this, release versions should be as small as possible
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

@@ -3,7 +3,7 @@ package com.github.codedex.sourceparser.entity.project.specific.javalang;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 
 /**
- * Created by IPat (Local) on 31.03.2017.
+ * @author IPat
  */
 
 final class MetaJavaLangPackage extends MetaPackage {
@@ -15,7 +15,7 @@ final class MetaJavaLangPackage extends MetaPackage {
         super("lang", new MetaPackage("java"));
     }
 
-    public static MetaJavaLangPackage getMetaPackage() {
+    static MetaJavaLangPackage getMetaPackage() {
         return SINGLETON;
     }
 }

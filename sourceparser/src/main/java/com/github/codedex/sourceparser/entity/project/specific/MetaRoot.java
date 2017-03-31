@@ -15,16 +15,12 @@ public class MetaRoot extends MetaPackage {
     }
 
     @Override
-    protected void setParent(MetaModel parent) {
+    public void setParent(MetaModel parent) {
         throw new RuntimeException("Attempted assigning MetaRoot a parent: Can't assign root a parent");
     }
 
     @NonNull
     public String getName() {
         return super.getName();
-    }
-
-    public boolean isRoot() {
-        return true;
     }
 }

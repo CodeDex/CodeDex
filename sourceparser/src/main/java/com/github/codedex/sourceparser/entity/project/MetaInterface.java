@@ -22,6 +22,10 @@ public class MetaInterface extends MetaType {
         super(type, name, parent, superclass, code);
     }
 
+    public MetaInterface(@NonNull String name, @Nullable MetaModel parent) {
+        this(name, parent, null);
+    }
+
     public MetaInterface(@NonNull String name, @Nullable MetaModel parent, @Nullable String code) {
         this(name, parent, null, code);
     }

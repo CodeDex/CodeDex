@@ -14,4 +14,11 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void checkStringArray() {
+        final String[] testArray = "test".split("\\.");
+        assertEquals("test", testArray[0]);
+        assertEquals(testArray.length, 1);
+    }
 }

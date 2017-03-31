@@ -16,7 +16,7 @@ import java.util.Set;
 
 public abstract class MetaModel {
 
-    private Type type;
+    private final Type type;
     private final String name;
     private URL docURL;
 
@@ -26,7 +26,6 @@ public abstract class MetaModel {
     public enum Type {
         ALL,
         PACKAGE,
-        ENUM,
         INTERFACE,
         CLASS
     }
@@ -51,11 +50,11 @@ public abstract class MetaModel {
         return this.docURL;
     }
 
-    protected void setParent(@Nullable MetaModel parent) {
+    public void setParent(@Nullable MetaModel parent) {
         if (parent == this.parent) return;  // Redundancy check
 
         if (this.parent != null)                // Check current parent
-            this.parent.children.remove(this);      // Do not use getChildren(), it returns a copy (Immutability)
+            this.parent.children.remove(this);      // Do not use getChildren(), it returns a copy (Immutability, please use setParent())
 
         if (parent != null)                     // Check new parent
             parent.children.add(this);              // Read above
@@ -82,5 +81,18 @@ public abstract class MetaModel {
 
     public boolean isRoot() {
         return parent == null;
+    }
+
+    /**
+     * Clears up all references to this object that could be out of reach for the user
+     * @param newParent Represents the new parent the children of this instance will have
+     * @return The new parent
+     */
+    public MetaModel kill(@Nullable MetaModel newParent) {
+        this.docURL = null;
+        setParent(null);
+        for (MetaModel child : children)
+            child.setParent(newParent);
+        return newParent;
     }
 }

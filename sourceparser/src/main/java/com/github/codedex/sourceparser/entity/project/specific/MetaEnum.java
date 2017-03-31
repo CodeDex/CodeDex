@@ -17,6 +17,6 @@ public class MetaEnum extends MetaClass {
     }
 
     public MetaEnum(@NonNull String name, @Nullable MetaModel parent, @Nullable String code) {
-        this(Type.ENUM, name, parent, code);
+        this(Type.CLASS, name, parent, code);
     }
 }
