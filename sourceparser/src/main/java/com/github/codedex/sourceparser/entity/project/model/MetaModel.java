@@ -3,6 +3,11 @@ package com.github.codedex.sourceparser.entity.project.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.github.codedex.sourceparser.entity.project.MetaClass;
+import com.github.codedex.sourceparser.entity.project.MetaInterface;
+import com.github.codedex.sourceparser.entity.project.MetaPackage;
+import com.github.codedex.sourceparser.entity.project.MetaPlaceholder;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +32,8 @@ public abstract class MetaModel {
         ALL,
         PACKAGE,
         INTERFACE,
-        CLASS
+        CLASS,
+        PLACEHOLDER
     }
 
     protected MetaModel(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent) {
@@ -41,6 +47,16 @@ public abstract class MetaModel {
     }
     public @NonNull String getName() {
         return this.name;
+    }
+    public @NonNull String getFullName() {
+        final StringBuilder nameBuilder = new StringBuilder(getName());
+        MetaModel iterator = this;
+        while (!iterator.isRoot()) {
+            iterator = iterator.getParent();
+            nameBuilder.insert(0, ".");
+            nameBuilder.insert(0, iterator.getName());
+        }
+        return nameBuilder.toString();
     }
     // TODO: Make immutable: Move DocURL setter to constructor and create builder, enabling copying and overloading an existing MetaModel
     public void setDocURL(URL docURL) {
@@ -83,6 +99,14 @@ public abstract class MetaModel {
         return parent == null;
     }
 
+    public MetaModel getRoot() {
+        MetaModel iterator = this;
+        while (!iterator.isRoot()) {
+            iterator = iterator.getParent();
+        }
+        return iterator;
+    }
+
     /**
      * Clears up all references to this object that could be out of reach for the user
      * @param newParent Represents the new parent the children of this instance will have
@@ -94,5 +118,19 @@ public abstract class MetaModel {
         for (MetaModel child : children)
             child.setParent(newParent);
         return newParent;
+    }
+
+    public static MetaModel getMetaModel(MetaModel.Type type, @NonNull String name, MetaModel parent) {
+        switch (type) {
+            case CLASS:
+                return new MetaClass(name, parent);
+            case INTERFACE:
+                return new MetaInterface(name, parent);
+            case PACKAGE:
+                if (parent instanceof MetaPackage)
+                    return new MetaPackage(name, (MetaPackage) parent);     // "break;" / "else" missing on purpose
+            default:
+                return new MetaPlaceholder(name, parent);
+        }
     }
 }

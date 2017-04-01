@@ -1,14 +1,7 @@
 package com.github.codedex.sourceparser.web.javadoc;
 
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.SimpleArrayMap;
-
-import com.github.codedex.sourceparser.entity.project.MetaClass;
-import com.github.codedex.sourceparser.entity.project.specific.MetaEnum;
-import com.github.codedex.sourceparser.entity.project.MetaInterface;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
-import com.github.codedex.sourceparser.entity.project.model.MetaType;
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
 import org.jsoup.Jsoup;
@@ -21,8 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * JavaDocParser
@@ -133,16 +127,52 @@ public class JavaDocParser {
         return null;
     }
 
+    private static class ClassEntityInfoContainer {
+        private final MetaPackage metaPackage;
+        private final String[] metaPath;
+        private final URL jdocURL;
+        private boolean isClass;
+
+        ClassEntityInfoContainer(MetaPackage metaPackage, String[] metaPath, URL jdocURL, boolean isClass) {
+            this.metaPackage = metaPackage;
+            this.metaPath = metaPath;
+            this.jdocURL = jdocURL;
+            this.isClass = isClass;
+        }
+
+        MetaPackage getMetaPackage() {
+            return metaPackage;
+        }
+
+        String[] getMetaPath() {
+            return metaPath;
+        }
+
+        URL getJDocURL() {
+            return jdocURL;
+        }
+
+        MetaModel.Type getType() {
+            if (isClass)
+                return MetaModel.Type.CLASS;
+            else
+                return MetaModel.Type.INTERFACE;
+        }
+    }
+
     private static MetaRoot parseAllClasses(Document allClassesDocument, URL urlContext) {
-        // Variable word definition:
-        // Entity = Abstract name for f.e. class, interface or enum. However, also used as an abstract definition for a specific instance of many.
-        // Document = HTML document which contains all classes
+
+            // Variable word definition:
+            // Entity = Abstract name for f.e. class, interface or enum. However, also used as an abstract definition for a specific instance of many.
+            // Document = HTML document which contains all classes
+
         final Elements documentEntities = allClassesDocument.select("ul");
         final MetaRoot packageRoot = new MetaRoot();
 
-        SimpleArrayMap<String, String> elementNestQueue = new SimpleArrayMap<>();   // This queue is supposed to get worked on at the end (nested classes waiting for parent definition)
+        Set<ClassEntityInfoContainer> entityNestQueue = new HashSet<>();                                   // This queue is supposed to get worked on at the end
+            // This for loop extracts all the information from the HTML document, puts them into a queue and also creates / finds the needed package for each class / interface
         for (final Element documentEntity : documentEntities) {
-            // Extract package path and class URL
+            // Extract package path and class JDocRelativeURL
             final String entityRelativeJDocURL = documentEntity.select("a").first().attr("href");
 
             // Parse package path
@@ -152,66 +182,93 @@ public class JavaDocParser {
             // Find package
             MetaPackage packageIterator = packageRoot;
             for (int a = 0; a < pathEntityNames.length - 1; a++) {
-                final MetaPackage packageIteratorPointer = packageIterator;     // Temporary storage for reference check later
+                final MetaPackage packageIteratorPointer = packageIterator;                         // Temporary storage for reference check later
                 for (MetaModel metaModel : packageIterator.getChildren(MetaModel.Type.PACKAGE)) {
                     if (metaModel.getName().equals(pathEntityNames[a])) {
-                        packageIterator = (MetaPackage) metaModel;          // Safe cast, getChildren(Type.PACKAGE) called
+                        packageIterator = (MetaPackage) metaModel;                                  // Safe cast, getChildren(Type.PACKAGE) called
                         break;
                     }
                 }
-                if (packageIteratorPointer != packageIterator) {                // This means the for loop didn't find the searched package
+                if (packageIteratorPointer != packageIterator) {                                    // This means the for loop didn't find the searched package
                     packageIterator = new MetaPackage(pathEntityNames[a], packageIteratorPointer);
                 }
             }
 
-            // Create JavadocURL
+            // Create JDocAbsoluteURL
             URL entityJDocURL = null;
             if (urlContext != null)
                 try { entityJDocURL = new URL(urlContext, entityRelativeJDocURL);
                 } catch (MalformedURLException ignored) { entityJDocURL = null; }
 
-            // Create entity instance
+            // Create entity info container
             final String entityName = documentEntity.text();
-            final String[] entityNestedPathEntityNames = entityName.split("\\.");
 
-            MetaModel modelIterator = packageIterator;
-            boolean waitForQueue = false;
-            final String nestedEntityNameWithoutPath = entityNestedPathEntityNames[entityNestedPathEntityNames.length - 1];
-            for (int a = 0; a < entityNestedPathEntityNames.length - 1; a++) {
-                final MetaModel modelIteratorPointer = modelIterator;     // Temporary storage for reference check later
-                for (MetaModel metaModel : modelIterator.getChildren(MetaModel.Type.CLASS, MetaModel.Type.INTERFACE)) {
-                    if (metaModel.getName().equals(entityNestedPathEntityNames[a])) {
-                        modelIterator = metaModel;
+            final String[] entityNestedPathEntityNames = entityName.split("\\.");
+            final boolean isClass = documentEntity.select("i").isEmpty();       // This is quite an assumption. !1! Check on a few Javadoc versions for truthfulness of this.
+
+            // Add info container to queue
+            entityNestQueue.add(new ClassEntityInfoContainer(packageIterator, entityNestedPathEntityNames, entityJDocURL, isClass));
+        }
+
+        // Work with the queue
+        while (!entityNestQueue.isEmpty()) {            // This might have to be worked through multiple times, as nested entities might have to wait for their parents
+            boolean nestQueueChanges = false;
+            final Iterator<ClassEntityInfoContainer> elementNestQueueIterator = entityNestQueue.iterator();
+            while (elementNestQueueIterator.hasNext()) {
+                final ClassEntityInfoContainer infoContainer = elementNestQueueIterator.next();
+                MetaModel modelIterator = infoContainer.getMetaPackage();
+                final String[] nestedPathEntityNames = infoContainer.getMetaPath();
+                final int nestedPathEntityCount = nestedPathEntityNames.length;
+                boolean parentMissingLock = false;
+                for (int a = 0; a < nestedPathEntityCount - 1; a++) {
+                    final MetaModel modelIteratorPointer = modelIterator;                           // Temporary storage for reference check later
+                    for (MetaModel metaModel : modelIterator.getChildren(MetaModel.Type.CLASS, MetaModel.Type.INTERFACE, MetaModel.Type.PLACEHOLDER)) {
+                        if (metaModel.getName().equals(nestedPathEntityNames[a])) {
+                            modelIterator = metaModel;
+                            break;
+                        }
+                    }
+                    if (modelIteratorPointer == modelIterator) {
+                        parentMissingLock = true;
                         break;
                     }
                 }
-                if (modelIteratorPointer != modelIterator) {                // This means the for loop didn't find the searched package
-                    final int startNestedNameIndex = entityName.length() - nestedEntityNameWithoutPath.length();
-                    final String nestedPathNameWithoutEntity = entityName.substring(0, startNestedNameIndex - 1);   // -1, because we want to exclude the dot in the path
-                    elementNestQueue.put(nestedPathNameWithoutEntity, nestedEntityNameWithoutPath);
-                    waitForQueue = true;
-                    break;
-                }
+                if (parentMissingLock) continue;
+
+                modelIterator = MetaModel.getMetaModel(infoContainer.getType(), nestedPathEntityNames[nestedPathEntityCount - 1], modelIterator);
+                modelIterator.setDocURL(infoContainer.getJDocURL());
+
+                nestQueueChanges = true;
             }
-
-            if (waitForQueue) continue;
-
-            final boolean isClass = documentEntity.select("i").isEmpty();
-            if (isClass)
-                modelIterator = new MetaClass(nestedEntityNameWithoutPath, modelIterator);
-            else
-                modelIterator = new MetaInterface(nestedEntityNameWithoutPath, modelIterator);
-        }
-
-        while (!elementNestQueue.isEmpty()) {
-            // Repeat the process that happened in the for-loop above, check for changes each iteration,
-            // if there were none, create all the elements from the queue with the dot in their name OR create the class needed yourself (Maybe use a MetaPlaceholder?)
+            if (!nestQueueChanges) {                                                                // Replace first elements first unclear parent with MetaPlaceholder
+                final ClassEntityInfoContainer infoContainer = entityNestQueue.iterator().next();
+                MetaModel modelIterator = infoContainer.getMetaPackage();
+                final String[] nestedPathEntityNames = infoContainer.getMetaPath();
+                final int nestedPathEntityCount = nestedPathEntityNames.length;
+                boolean addedNewPlaceholder = false;
+                for (int a = 0; a < nestedPathEntityCount - 1; a++) {
+                    final MetaModel modelIteratorPointer = modelIterator;                           // Temporary storage for reference check later
+                    for (MetaModel metaModel : modelIterator.getChildren(MetaModel.Type.CLASS, MetaModel.Type.INTERFACE, MetaModel.Type.PLACEHOLDER)) {
+                        if (metaModel.getName().equals(nestedPathEntityNames[a])) {
+                            modelIterator = metaModel;
+                            break;
+                        }
+                    }
+                    if (modelIteratorPointer == modelIterator) {
+                        MetaModel.getMetaModel(MetaModel.Type.PLACEHOLDER, nestedPathEntityNames[a], modelIterator);
+                        addedNewPlaceholder = true;
+                        break;
+                    }
+                }
+                if (!addedNewPlaceholder)
+                    throw new RuntimeException("Endless loop: Queue isn't making progress (Unreachable code segment, handled above)");
+            }
         }
 
         return packageRoot;
     }
 
-    private String[] getPathParts(String path) {
+    private static String[] getPathParts(String path) {
         return path.split("\\.");
     }
 }
