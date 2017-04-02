@@ -8,6 +8,10 @@ import com.github.codedex.sourceparser.entity.project.MetaInterface;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 import com.github.codedex.sourceparser.entity.project.MetaPlaceholder;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +27,7 @@ public abstract class MetaModel {
 
     private final Type type;
     private final String name;
-    private URL docURL;
+    private URL jdocURL;
 
     private MetaModel parent;
     protected final Set<MetaModel> children = new HashSet<>();
@@ -59,12 +63,21 @@ public abstract class MetaModel {
         return nameBuilder.toString();
     }
     // TODO: Make immutable: Move DocURL setter to constructor and create builder, enabling copying and overloading an existing MetaModel
-    public void setDocURL(URL docURL) {
-        this.docURL = docURL;
+    public void setJDocURL(URL jdocURL) {
+        this.jdocURL = jdocURL;
     }
-    public @Nullable URL getDocURL() {
-        return this.docURL;
+    public @Nullable URL getJDocURL() {
+        return this.jdocURL;
     }
+    public void buildFromJDoc() throws IOException {
+        final URL jdocURL = getJDocURL();
+        if (jdocURL == null) return;
+        final Document entityJDoc = Jsoup.connect(jdocURL.toString()).get();
+
+        parseJDoc(entityJDoc);
+    }
+
+    protected abstract void parseJDoc( document);
 
     public void setParent(@Nullable MetaModel parent) {
         if (parent == this.parent) return;  // Redundancy check
@@ -113,7 +126,7 @@ public abstract class MetaModel {
      * @return The new parent
      */
     public MetaModel kill(@Nullable MetaModel newParent) {
-        this.docURL = null;
+        this.jdocURL = null;
         setParent(null);
         for (MetaModel child : children)
             child.setParent(newParent);

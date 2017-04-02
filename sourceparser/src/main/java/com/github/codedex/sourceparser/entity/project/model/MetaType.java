@@ -5,7 +5,13 @@ import android.support.annotation.Nullable;
 
 import com.github.codedex.sourceparser.entity.Modifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
+import com.github.codedex.sourceparser.entity.project.MetaClass;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 
 /**
@@ -33,7 +39,6 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
         this.code = code;
     }
 
-    // TODO: Make immutable and create builder class
     public void setCode(@Nullable String code) {
         this.code = code;
     }
@@ -43,6 +48,11 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
 
     public MetaType getSuperclass() {
         return this.superclass;
+    }
+
+    @Override
+    public void parseJDoc(Document jdocDocument) {
+        parseMethodDetails();
     }
 
     // TODO: Every MetaType happens to contain Methods in the section "Method Detail".
