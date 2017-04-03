@@ -1,14 +1,12 @@
-package com.github.codedex.sourceparser;
+package com.github.codedex.sourceparser.fetcher;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by IPat on 02.04.2017.
- */
-
-/**
+ * @author Patrick "IPat" Hein
+ *
  * The IterableFetcher lets you iterate over its fetched results.
  * @param <I> stands for input  - Represents the input that gets fetched
  * @param <O> stands for output - Represents the unique entities that get iterated over

@@ -6,11 +6,10 @@ import com.github.codedex.sourceparser.entity.project.model.MetaModel.Type;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 21.10.2016.
- */
-
-/**
- * @deprecated I decided to ignore parent type check as a normal javadoc should have regulated that already. (Unregularities in a Javadoc are not the app's problem)
+ * @author Patrick "IPat" Hein
+ *
+ * @deprecated I decided to ignore parent type check as a normal javadoc should have regulated that already.
+ * (Unregularities in a Javadoc are not the app's problem)
  */
 public class ParentTypeException extends Exception {
 

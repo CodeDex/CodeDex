@@ -7,7 +7,7 @@ import com.github.codedex.sourceparser.entity.project.MetaClass;
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
 /**
- * Created by IPat (Local) on 29.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaThrowable extends MetaClass {

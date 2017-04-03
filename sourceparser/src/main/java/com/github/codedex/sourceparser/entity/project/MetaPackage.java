@@ -7,7 +7,7 @@ import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
 
 /**
- * Created by IPat (Local) on 12.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaPackage extends MetaModel {

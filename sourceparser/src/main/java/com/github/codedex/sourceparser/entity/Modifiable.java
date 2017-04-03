@@ -3,7 +3,7 @@ package com.github.codedex.sourceparser.entity;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 28.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public interface Modifiable {

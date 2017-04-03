@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 24.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaClass extends MetaType {

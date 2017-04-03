@@ -6,10 +6,8 @@ import android.support.annotation.Nullable;
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
 /**
- * Created by IPat on 01.04.2017.
- */
-
-/**
+ * @author Patrick "IPat" Hein
+ *
  * Represents a class that wasn't able to be analyzed.
  */
 public final class MetaPlaceholder extends MetaModel {

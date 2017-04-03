@@ -3,7 +3,7 @@ package com.github.codedex.sourceparser.entity.project.specific.javalang;
 import com.github.codedex.sourceparser.entity.project.MetaClass;
 
 /**
- * Created by IPat (Local) on 29.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public final class MetaJavaObject extends MetaClass {

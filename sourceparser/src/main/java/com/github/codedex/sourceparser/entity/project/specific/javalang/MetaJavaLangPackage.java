@@ -3,7 +3,7 @@ package com.github.codedex.sourceparser.entity.project.specific.javalang;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 
 /**
- * @author IPat
+ * @author Patrick "IPat" Hein
  */
 
 final class MetaJavaLangPackage extends MetaPackage {

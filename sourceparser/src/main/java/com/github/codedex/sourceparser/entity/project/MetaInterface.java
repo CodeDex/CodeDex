@@ -10,7 +10,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 24.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaInterface extends MetaType {

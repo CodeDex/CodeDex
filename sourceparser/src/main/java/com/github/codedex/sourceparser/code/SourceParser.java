@@ -10,7 +10,7 @@ import okio.BufferedSource;
 import okio.ByteString;
 
 /**
- * Created by fabianterhorst on 25.09.16.
+ * @author Fabian Terhorst
  */
 
 public class SourceParser {

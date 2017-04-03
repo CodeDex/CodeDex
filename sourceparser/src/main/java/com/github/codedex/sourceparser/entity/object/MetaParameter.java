@@ -7,10 +7,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 27.03.2017.
- */
-
-/**
+ * @author Patrick "IPat" Hein
+ * 
  * MetaParameter represents a parameter used by methods. If there's ever a deeper integration of these models with code, this class will extend MetaVariable (TBC)
  * A parameter can only have the final modifier.
  */

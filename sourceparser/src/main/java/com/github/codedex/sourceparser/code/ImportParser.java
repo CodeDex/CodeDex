@@ -9,6 +9,8 @@ import okio.Buffer;
 import okio.ByteString;
 
 /**
+ * @author Fabian Terhorst
+ *
  * Parse imports from file
  */
 

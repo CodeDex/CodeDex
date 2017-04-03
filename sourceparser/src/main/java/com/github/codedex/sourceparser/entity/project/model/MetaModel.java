@@ -7,6 +7,8 @@ import com.github.codedex.sourceparser.entity.project.MetaClass;
 import com.github.codedex.sourceparser.entity.project.MetaInterface;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 import com.github.codedex.sourceparser.entity.project.MetaPlaceholder;
+import com.github.codedex.sourceparser.fetcher.ModelFetcher;
+import com.github.codedex.sourceparser.web.javadoc.fetcher.ModelJDocV7Fetcher;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @author Patrick "IPat" Hein
+ *
  * Abstract class of container for any metadata, f.e. source code in the example of
  * MetaClass or other MetaContainers in MetaPackage.
  */
@@ -62,7 +66,7 @@ public abstract class MetaModel {
         }
         return nameBuilder.toString();
     }
-    // TODO: Make immutable: Move DocURL setter to constructor and create builder, enabling copying and overloading an existing MetaModel
+
     public void setJDocURL(URL jdocURL) {
         this.jdocURL = jdocURL;
     }
@@ -74,10 +78,11 @@ public abstract class MetaModel {
         if (jdocURL == null) return;
         final Document entityJDoc = Jsoup.connect(jdocURL.toString()).get();
 
-        parseJDoc(entityJDoc);
+        final ModelJDocV7Fetcher fetcher = new ModelJDocV7Fetcher(entityJDoc);
+        buildFromFetcher(fetcher);
     }
 
-    protected abstract void parseJDoc( document);
+    public abstract <T> void buildFromFetcher(ModelFetcher<T> fetcher);
 
     public void setParent(@Nullable MetaModel parent) {
         if (parent == this.parent) return;  // Redundancy check

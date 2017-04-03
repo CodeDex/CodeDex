@@ -4,7 +4,7 @@ import com.github.codedex.sourceparser.entity.project.MetaClass;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 
 /**
- * Created by IPat (Local) on 29.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public final class MetaJavaEnum extends MetaClass {

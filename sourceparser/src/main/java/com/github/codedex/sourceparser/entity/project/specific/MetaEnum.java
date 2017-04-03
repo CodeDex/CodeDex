@@ -8,7 +8,7 @@ import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 import com.github.codedex.sourceparser.entity.project.specific.javalang.MetaJavaEnum;
 
 /**
- * Created by IPat (Local) on 24.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaEnum extends MetaClass {

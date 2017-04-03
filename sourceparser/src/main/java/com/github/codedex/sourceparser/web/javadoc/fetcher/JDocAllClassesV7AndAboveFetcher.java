@@ -9,10 +9,8 @@ import org.jsoup.select.Elements;
 import java.util.List;
 
 /**
- * Created by IPat on 02.04.2017.
- */
-
-/**
+ * @author Patrick "IPat" Hein
+ *
  * This Parser is usable for JDocs which use Java Version >= 7
  *
  * Sample 1:    https://hub.spigotmc.org/javadocs/bukkit/allclasses-frame.html

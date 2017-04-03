@@ -21,9 +21,9 @@ import java.util.Set;
 
 /**
  * JavaDocParser
- * @author IPat
+ * @author Patrick "IPat" Hein
  *
- * Parses an HTML document to an array of MetaContainers (Abstract class for Classes, Interfaces, etc.).
+ * Parses an HTML document to a container object of MetaModels (Abstract class for Classes, Interfaces, etc.).
  */
 
 public class JavaDocParser {

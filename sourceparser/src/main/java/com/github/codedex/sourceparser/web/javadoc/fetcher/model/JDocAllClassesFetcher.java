@@ -1,12 +1,12 @@
 package com.github.codedex.sourceparser.web.javadoc.fetcher.model;
 
-import com.github.codedex.sourceparser.IterableFetcher;
+import com.github.codedex.sourceparser.fetcher.IterableFetcher;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 /**
- * Created by IPat on 02.04.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public abstract class JDocAllClassesFetcher extends IterableFetcher<Document, JDocAllClassesFetcher.JDocAllClassesEntity, Elements> {
@@ -29,7 +29,7 @@ public abstract class JDocAllClassesFetcher extends IterableFetcher<Document, JD
             if (relativeJdocURL != null && relativeJdocURL.length() >= 1) {
                 packagePathEntities = relativeJavadocURL.split("/");
             } else {
-                // get from title attribute, if that one is empty make the relativeJdocURL null
+                // TODO: get from title attribute, if that one is empty make the relativeJdocURL null
             }
         }
 

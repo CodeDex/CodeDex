@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by IPat (Local) on 27.03.2017.
+ * @author Patrick "IPat" Hein
  */
 
 public class MetaMethod implements Modifiable.AccessModifiable {
