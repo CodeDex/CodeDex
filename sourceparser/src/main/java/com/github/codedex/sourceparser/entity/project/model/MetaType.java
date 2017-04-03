@@ -8,7 +8,6 @@ import com.github.codedex.sourceparser.entity.Modifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
 import com.github.codedex.sourceparser.fetcher.ModelFetcher;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -52,20 +51,19 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
 
         this.code = (code == null ? "" : code);
 
-        if (methods == null)
-            methods = new HashSet<>();
-        for (SimpleArrayMap<String, String> methodInfoMap : methods) {
-            // TODO: Analyze methodInfoMap for information about a single new method
-        }
+        if (methods != null)
+            for (SimpleArrayMap<String, String> methodInfoMap : methods) {
+                // TODO: Analyze methodInfoMap for information about a single new method
+            }
 
         if (superclass == null)
-            this.superclass = getSuperclassDefault();
+            this.superclass = getDefaultSuperclass();
         else {
             // TODO: Analyze superclassInfoMap for information about the super class
         }
     }
 
-    protected abstract MetaType getSuperclassDefault();
+    protected abstract MetaType getDefaultSuperclass();
 
     // TODO: Every MetaType happens to contain Methods in the section "Method Detail".
     // An enum also has "Enum Constant Detail".

@@ -28,6 +28,9 @@ import java.util.Set;
 
 public class JavaDocParser {
 
+    // TODO: Create a version validator class thats sole purpose is to find out the version and verify the state of a Javadoc document
+    // Different versions + different possible documents = NotLikeThis (Or, in this case, not IN this [class]) for the sake of cleanness
+
     /**
      * Confirms whether a document can be parsed.
      *
@@ -169,13 +172,14 @@ public class JavaDocParser {
      */
     private static MetaRoot parseAllClasses(Document allClassesDocument, URL urlContext) {
 
-        // TODO: Very old Javadocs don't have ul to list their classes, but uses a table and <br>s: http://static.javadoc.io/org.springframework/spring/2.0.5/allclasses-frame.html
-        // Half solved, the adapter is ready, but the JDocAllClassV6AndBelowFetcher still needs to be created
-
             // Variable word definition:
             // OutputIterator = Abstract name for f.e. class, interface or enum. However, also used as an abstract definition for a specific instance of many.
             // Document = HTML document which contains all classes
 
+        // TODO: Very old Javadocs don't have ul to list their classes, but uses a table and <br>s: http://static.javadoc.io/org.springframework/spring/2.0.5/allclasses-frame.html
+        // Half solved, the adapter is ready, but the JDocAllClassV6AndBelowFetcher still needs to be created
+
+        // This is the fetcher that has to change depending on the Javadocs version
         final JDocAllClassesFetcher fetcher = new JDocAllClassesV7AndAboveFetcher(allClassesDocument);  // The Fetcher already fetches at creation
         final MetaRoot packageRoot = new MetaRoot();
 
@@ -185,11 +189,11 @@ public class JavaDocParser {
             URL entityJDocURL = null;
             MetaPackage packageIterator = packageRoot;
 
-            if (allClassesEntity.getRelativeJavadocURL() != null) {
+            if (allClassesEntity.getRelativeJDocURL() != null) {
                 final String[] pathEntityNames = allClassesEntity.getPackagePathEntities();
 
                 // Parse package path
-                if (pathEntityNames.length == 0) return packageRoot;
+                if (pathEntityNames == null || pathEntityNames.length == 0) continue;
 
                 // Find package
                 for (int a = 0; a < pathEntityNames.length - 1; a++) {
@@ -206,7 +210,7 @@ public class JavaDocParser {
                 // Create JDocAbsoluteURL
                 if (urlContext != null)
                     try {
-                        entityJDocURL = new URL(urlContext, allClassesEntity.getRelativeJavadocURL());
+                        entityJDocURL = new URL(urlContext, allClassesEntity.getRelativeJDocURL());
                     } catch (MalformedURLException ignored) {
                         entityJDocURL = null;
                     }
@@ -273,7 +277,7 @@ public class JavaDocParser {
                     }
                 }
                 if (!addedNewPlaceholder)
-                    throw new RuntimeException("Endless loop: Queue isn't making progress (Unreachable code segment, should be handled in for loop above)");
+                    throw new RuntimeException("Endless loop: Queue isn't making progress (Unreachable code segment, should be handled in for-loop directly above)");
             }
         }
 

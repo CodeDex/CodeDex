@@ -51,9 +51,9 @@ public class MetaClass extends MetaType {
     }
 
     private void setDefaultNonAccessModifiers(MetaModel parent) {
-        if (parent instanceof MetaType)                                 // Parent is class / interface
+        if (parent instanceof MetaClass)                                // Parent is class
             nonAccessModifiers = EnumSet.noneOf(NonAccessModifier.class);
-        else                                                            // Parent is package
+        else                                                            // Parent is package or interface
             nonAccessModifiers = EnumSet.of(NonAccessModifier.STATIC);      // Even though this decision is discussable, it should depend on how the classes get displayed.
     }
 

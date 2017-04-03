@@ -6,6 +6,8 @@ import java.util.Set;
 
 /**
  * @author Patrick "IPat" Hein
+ *
+ * The adapter that is the key-interface between MetaModels and custom Parsers
  */
 
 public abstract class ModelFetcher<I> {

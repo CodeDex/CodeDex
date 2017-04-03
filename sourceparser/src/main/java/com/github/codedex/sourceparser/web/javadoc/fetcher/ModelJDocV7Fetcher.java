@@ -17,6 +17,7 @@ public class ModelJDocV7Fetcher extends ModelFetcher<Document> {
         super(jdocDocument);
     }
 
+    // TODO: all methods here
     protected SimpleArrayMap<String, String> fetchSuperclass(Document jdocDocument) {
         return null;
     }

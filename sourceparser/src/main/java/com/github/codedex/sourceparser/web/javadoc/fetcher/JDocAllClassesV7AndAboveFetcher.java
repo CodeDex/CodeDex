@@ -33,16 +33,20 @@ public class JDocAllClassesV7AndAboveFetcher extends JDocAllClassesFetcher {
         for (Element documentEntity : documentEntities) {
             final Element documentEntityLinkReference = documentEntity.select("a").first();
             final String relativeJDocURL;
-            if (documentEntityLinkReference != null)
+            final String title;
+            if (documentEntityLinkReference != null) {
                 relativeJDocURL = documentEntityLinkReference.attr("href");
-            else
+                title = documentEntityLinkReference.attr("title");
+            } else {
                 relativeJDocURL = null;
+                title = null;
+            }
 
             final boolean isItalic = !documentEntity.select("i").isEmpty();
 
             final String entityName = documentEntity.text();
 
-            buffer.add(new JDocAllClassesEntity(relativeJDocURL, isItalic, entityName));
+            buffer.add(new JDocAllClassesEntity(relativeJDocURL, isItalic, entityName, title));
         }
     }
 }
