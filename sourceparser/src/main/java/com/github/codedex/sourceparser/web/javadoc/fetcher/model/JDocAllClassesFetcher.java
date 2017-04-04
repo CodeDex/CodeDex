@@ -62,7 +62,6 @@ public abstract class JDocAllClassesFetcher extends IterableFetcher<Document, JD
         }
     }
 
-    // This might NOT be true for the JDocAllClassesLowVersionFetcher. TODO: Check on truthfulness
     protected int size(Elements sharedObject) {
         return sharedObject.size();
     }

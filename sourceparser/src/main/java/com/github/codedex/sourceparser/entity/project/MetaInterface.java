@@ -7,6 +7,7 @@ import com.github.codedex.sourceparser.entity.project.model.MetaType;
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,11 +16,10 @@ import java.util.Set;
 
 public class MetaInterface extends MetaType {
 
-    private AccessModifier accessModifier = AccessModifier.PACKAGE;
-    private Set<NonAccessModifier> nonAccessModifiers = EnumSet.noneOf(NonAccessModifier.class);
+    private Set<MetaType> superclasses = new HashSet<>(0);
 
-    protected MetaInterface(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, MetaType superclass, @Nullable String code) {
-        super(type, name, parent, superclass, code);
+    protected MetaInterface(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, Set<MetaType> superclasses, @Nullable String code) {
+        super(type, name, parent, code);
     }
 
     public MetaInterface(@NonNull String name, @Nullable MetaModel parent) {
@@ -30,17 +30,11 @@ public class MetaInterface extends MetaType {
         this(name, parent, null, code);
     }
 
-    public MetaInterface(@NonNull String name, @Nullable MetaModel parent, MetaType superclass, @Nullable String code) {
-        super(Type.INTERFACE, name, parent, superclass, code);
+    public MetaInterface(@NonNull String name, @Nullable MetaModel parent, Set<MetaType> superclasses, @Nullable String code) {
+        super(Type.INTERFACE, name, parent, code);
     }
 
-    @Override
-    public Set<NonAccessModifier> getNonAccessModifiers() {
-        return this.nonAccessModifiers;
-    }
-
-    @Override
-    public AccessModifier getAccessModifier() {
-        return accessModifier;
+    protected Set<NonAccessModifier> getDefaultNonAccessModifiers(MetaModel parent) {
+        return EnumSet.of(NonAccessModifier.STATIC);
     }
 }

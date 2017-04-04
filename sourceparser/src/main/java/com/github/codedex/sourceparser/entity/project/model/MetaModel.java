@@ -7,8 +7,8 @@ import com.github.codedex.sourceparser.entity.project.MetaClass;
 import com.github.codedex.sourceparser.entity.project.MetaInterface;
 import com.github.codedex.sourceparser.entity.project.MetaPackage;
 import com.github.codedex.sourceparser.entity.project.MetaPlaceholder;
-import com.github.codedex.sourceparser.fetcher.ModelFetcher;
-import com.github.codedex.sourceparser.web.javadoc.fetcher.ModelJDocV7Fetcher;
+import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
+import com.github.codedex.sourceparser.web.javadoc.fetcher.MetaModelJDocV7Fetcher;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -78,11 +78,11 @@ public abstract class MetaModel {
         if (jdocURL == null) return;
         final Document entityJDoc = Jsoup.connect(jdocURL.toString()).get();
 
-        final ModelJDocV7Fetcher fetcher = new ModelJDocV7Fetcher(entityJDoc);
+        final MetaModelJDocV7Fetcher fetcher = new MetaModelJDocV7Fetcher(entityJDoc);
         buildFromFetcher(fetcher);
     }
 
-    public abstract <T> void buildFromFetcher(ModelFetcher<T> fetcher);
+    public abstract <T> void buildFromFetcher(MetaModelFetcher<T> fetcher);
 
     public void setParent(@Nullable MetaModel parent) {
         if (parent == this.parent) return;  // Redundancy check

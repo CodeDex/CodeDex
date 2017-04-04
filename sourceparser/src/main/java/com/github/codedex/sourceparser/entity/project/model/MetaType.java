@@ -2,12 +2,12 @@ package com.github.codedex.sourceparser.entity.project.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.SimpleArrayMap;
 
 import com.github.codedex.sourceparser.entity.Modifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
-import com.github.codedex.sourceparser.fetcher.ModelFetcher;
+import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,13 +23,14 @@ import java.util.Set;
  */
 public abstract class MetaType extends MetaModel implements Modifiable.AccessModifiable {
 
-    private String code;
-    private Set<MetaMethod> methods;
-    private MetaType superclass;
+    private AccessModifier accessModifier = AccessModifier.PACKAGE;
+    private Set<NonAccessModifier> nonAccessModifiers;
+    private String code = "";
+    private Set<MetaMethod> methods = new HashSet<>(0);
 
-    protected MetaType(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, MetaType superclass, @Nullable String code) {
+    protected MetaType(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, @Nullable String code) {
         super(type, name, parent);
-        this.superclass = superclass;
+        this.nonAccessModifiers = getDefaultNonAccessModifiers(parent);
         this.code = code;
     }
 
@@ -40,30 +41,31 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
         return this.code;
     }
 
-    public MetaType getSuperclass() {
-        return this.superclass;
+    public Set<MetaMethod> getMethods() {
+        return this.methods;
     }
 
-    public <T> void buildFromFetcher(ModelFetcher<T> fetcher) {
+    // TODO: Override in MetaClass and MetaInterface for further use of Fetcher
+    public <T> void buildFromFetcher(MetaModelFetcher<T> fetcher) {
         final String code = fetcher.getCode();
-        Set<SimpleArrayMap<String, String>> methods = fetcher.getMethods();
-        final SimpleArrayMap<String, String> superclass = fetcher.getSuperclass();
+        final Set<MetaMethod> methods = fetcher.getMethods();
 
-        this.code = (code == null ? "" : code);
+        if (code != null)
+            this.code = code;
 
         if (methods != null)
-            for (SimpleArrayMap<String, String> methodInfoMap : methods) {
-                // TODO: Analyze methodInfoMap for information about a single new method
-            }
-
-        if (superclass == null)
-            this.superclass = getDefaultSuperclass();
-        else {
-            // TODO: Analyze superclassInfoMap for information about the super class
-        }
+            this.methods = methods;
     }
 
-    protected abstract MetaType getDefaultSuperclass();
+    public AccessModifier getAccessModifier() {
+        return this.accessModifier;
+    }
+
+    public Set<NonAccessModifier> getNonAccessModifiers() {
+        return this.nonAccessModifiers;
+    }
+
+    protected abstract Set<NonAccessModifier> getDefaultNonAccessModifiers(MetaModel parent);
 
     // TODO: Every MetaType happens to contain Methods in the section "Method Detail".
     // An enum also has "Enum Constant Detail".
