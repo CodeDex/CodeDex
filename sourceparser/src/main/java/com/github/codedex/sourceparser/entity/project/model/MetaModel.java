@@ -31,7 +31,7 @@ public abstract class MetaModel {
 
     private final Type type;
     private final String name;
-    private URL jdocURL;
+    private final URL jdocURL;
 
     private MetaModel parent;
     protected final Set<MetaModel> children = new HashSet<>();
@@ -44,20 +44,21 @@ public abstract class MetaModel {
         PLACEHOLDER
     }
 
-    protected MetaModel(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent) {
+    protected MetaModel(Type type, MetaModelFetcher fetcher) {
         this.type = type;
-        this.name = name;
-        setParent(parent);
+        this.name = fetcher.getName();
+        this.jdocURL = fetcher.getJDocURL();
+        setParent(fetcher.getParent());
     }
 
     public Type getType() {
         return this.type;
     }
-    public @NonNull String getName() {
+    public String getName() {
         return this.name;
     }
-    public @NonNull String getFullName() {
-        final StringBuilder nameBuilder = new StringBuilder(getName());
+    public String getFullName() {
+        final StringBuilder nameBuilder = new StringBuilder(this.name == null ? "" : this.name);
         MetaModel iterator = this;
         while (!iterator.isRoot()) {
             iterator = iterator.getParent();
@@ -67,9 +68,6 @@ public abstract class MetaModel {
         return nameBuilder.toString();
     }
 
-    public void setJDocURL(URL jdocURL) {
-        this.jdocURL = jdocURL;
-    }
     public @Nullable URL getJDocURL() {
         return this.jdocURL;
     }
@@ -82,9 +80,7 @@ public abstract class MetaModel {
         buildFromFetcher(fetcher);
     }
 
-    public abstract <T> void buildFromFetcher(MetaModelFetcher<T> fetcher);
-
-    public void setParent(@Nullable MetaModel parent) {
+    void setParent(@Nullable MetaModel parent) {
         if (parent == this.parent) return;  // Redundancy check
 
         if (this.parent != null)                // Check current parent

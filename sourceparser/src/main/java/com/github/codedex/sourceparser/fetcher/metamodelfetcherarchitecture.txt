@@ -1,0 +1,26 @@
+author: Patrick "IPat" Hein
+
+IDEA #1:
+
+MetaModelFetchers are the main carriers, they fetch the data from their input and build a MetaModel from it.
+
+PROBLEM #1:
+
+Multiple MetaModelFetchers for a backup system if a fetcher can't deliver a certain value are not self-explanatory
+
+    SOLUTION #1a:
+
+    Multiple MetaModelFetchers don't exist as a team (Bad Solution)
+
+    SOLUTION #1b:
+
+    Prioritized MetaModelFetcher teams by providing a MetaModelBuilder class which uses a MetaModelFetcher priority list / queue as a parameter.
+
+
+18.04.17 20:08 - WORK ON #1b (Restructuring of MetaModel economy)
+
+DESCRIPTION #1b:
+
+MetaModels are only containers for the information. They are supposed to be immutable once created.
+MetaModelFetchers have the functionality of using input to fetch necessary information for the MetaModels.
+MetaModelBuilders use the functions of MetaModelFetchers to create new MetaModels.

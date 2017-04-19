@@ -28,10 +28,10 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
     private String code = "";
     private Set<MetaMethod> methods = new HashSet<>(0);
 
-    protected MetaType(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, @Nullable String code) {
-        super(type, name, parent);
-        this.nonAccessModifiers = getDefaultNonAccessModifiers(parent);
-        this.code = code;
+    protected MetaType(Type type, MetaModelFetcher fetcher) {
+        super(type, fetcher);
+        this.nonAccessModifiers = getDefaultNonAccessModifiers(fetcher.getParent());
+        this.code = fetcher.getCode();
     }
 
     public void setCode(@Nullable String code) {
@@ -46,7 +46,7 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
     }
 
     // TODO: Override in MetaClass and MetaInterface for further use of Fetcher
-    public <T> void buildFromFetcher(MetaModelFetcher<T> fetcher) {
+    public void buildFromFetcher(MetaModelFetcher fetcher) {
         final String code = fetcher.getCode();
         final Set<MetaMethod> methods = fetcher.getMethods();
 
@@ -64,8 +64,6 @@ public abstract class MetaType extends MetaModel implements Modifiable.AccessMod
     public Set<NonAccessModifier> getNonAccessModifiers() {
         return this.nonAccessModifiers;
     }
-
-    protected abstract Set<NonAccessModifier> getDefaultNonAccessModifiers(MetaModel parent);
 
     // TODO: Every MetaType happens to contain Methods in the section "Method Detail".
     // An enum also has "Enum Constant Detail".
