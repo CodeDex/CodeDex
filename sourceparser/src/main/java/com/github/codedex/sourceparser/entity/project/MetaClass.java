@@ -1,10 +1,9 @@
 package com.github.codedex.sourceparser.entity.project;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
+import com.github.codedex.sourceparser.entity.object.MetaConstructor;
 import com.github.codedex.sourceparser.entity.project.model.MetaType;
-import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
 
 import java.util.HashSet;

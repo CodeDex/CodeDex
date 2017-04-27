@@ -2,7 +2,7 @@ package com.github.codedex.sourceparser.web.javadoc.fetcher;
 
 import android.support.v4.util.SimpleArrayMap;
 
-import com.github.codedex.sourceparser.entity.Modifiable;
+import com.github.codedex.sourceparser.entity.NonAccessModifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
 import com.github.codedex.sourceparser.entity.project.MetaInterface;
 import com.github.codedex.sourceparser.entity.project.model.MetaType;
@@ -11,7 +11,6 @@ import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -20,8 +19,8 @@ import java.util.Set;
 
 public class MetaModelJDocV7Fetcher extends MetaModelFetcher<Document> {
 
-    protected Modifiable.AccessModifiable.AccessModifier accessModifier;
-    protected Set<Modifiable.NonAccessModifier> nonAccessModifiers;
+    protected NonAccessModifiable.AccessModifiable.AccessModifier accessModifier;
+    protected Set<NonAccessModifiable.NonAccessModifier> nonAccessModifiers;
     protected Set<MetaType> parents;
     protected Set<MetaInterface> interfaces;
 

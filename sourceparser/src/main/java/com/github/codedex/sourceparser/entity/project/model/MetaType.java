@@ -1,9 +1,8 @@
 package com.github.codedex.sourceparser.entity.project.model;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.github.codedex.sourceparser.entity.Modifiable;
+import com.github.codedex.sourceparser.entity.NonAccessModifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
 import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
 
@@ -21,7 +20,7 @@ import java.util.Set;
  *
  * Any class is a MetaType, any interface is as well. Annotations, Enums and Exceptions are compiled as classes, so they're also MetaTypes.
  */
-public abstract class MetaType extends MetaModel implements Modifiable.AccessModifiable {
+public abstract class MetaType extends MetaModel implements NonAccessModifiable.AccessModifiable {
 
     private AccessModifier accessModifier = AccessModifier.PACKAGE;
     private Set<NonAccessModifier> nonAccessModifiers;

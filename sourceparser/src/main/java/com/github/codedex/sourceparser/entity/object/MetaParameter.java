@@ -1,6 +1,6 @@
 package com.github.codedex.sourceparser.entity.object;
 
-import com.github.codedex.sourceparser.entity.Modifiable;
+import com.github.codedex.sourceparser.entity.NonAccessModifiable;
 import com.github.codedex.sourceparser.entity.project.model.MetaType;
 
 import java.util.EnumSet;
@@ -12,7 +12,7 @@ import java.util.Set;
  * MetaParameter represents a parameter used by methods. If there's ever a deeper integration of these models with code, this class will extend MetaVariable (TBC)
  * A parameter can only have the final modifier.
  */
-public class MetaParameter implements Modifiable {
+public class MetaParameter implements NonAccessModifiable {
 
     private Set<NonAccessModifier> modifiers = EnumSet.noneOf(NonAccessModifier.class);
     private MetaType type;
