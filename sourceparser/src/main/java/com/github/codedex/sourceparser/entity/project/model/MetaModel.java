@@ -1,150 +1,136 @@
 package com.github.codedex.sourceparser.entity.project.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import com.github.codedex.sourceparser.entity.MetaMutable;
 
-import com.github.codedex.sourceparser.entity.project.MetaClass;
-import com.github.codedex.sourceparser.entity.project.MetaInterface;
-import com.github.codedex.sourceparser.entity.project.MetaPackage;
-import com.github.codedex.sourceparser.entity.project.MetaPlaceholder;
-import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
-import com.github.codedex.sourceparser.web.javadoc.fetcher.MetaModelJDocV7Fetcher;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static com.github.codedex.sourceparser.Utils.checkSet;
 
 /**
  * @author Patrick "IPat" Hein
  *
  * Abstract class of container for any metadata, f.e. source code in the example of
  * MetaClass or other MetaContainers in MetaPackage.
+ *
+ * Only used in project context, for elements that can have children / parents.
+ *
+ * (Don't confuse parents with superclasses:)
+ * @see MetaType
  */
 
-public abstract class MetaModel {
+public abstract class MetaModel implements MetaMutable {
 
-    private final Type type;
-    private final String name;
-    private final URL jdocURL;
-
-    private MetaModel parent;
-    protected final Set<MetaModel> children = new HashSet<>();
+    protected final Updater updater;
 
     public enum Type {
         ALL,
         PACKAGE,
         INTERFACE,
         CLASS,
-        PLACEHOLDER
+        PLACEHOLDER // Decided against "OTHER" as name, since unresolved classes really are supposed to be resolved and "OTHER" maybe doesn't bring that across
     }
 
-    protected MetaModel(Type type, MetaModelFetcher fetcher) {
-        this.type = type;
-        this.name = fetcher.getName();
-        this.jdocURL = fetcher.getJDocURL();
-        setParent(fetcher.getParent());
+    protected MetaModel(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+        this.updater = new Updater(type, name, jdocURL, parent, checkSet(children));
+    }
+
+    protected MetaModel(Updater updater) {
+        this.updater = updater;
     }
 
     public Type getType() {
-        return this.type;
+        return updater.type;
     }
     public String getName() {
-        return this.name;
+        return updater.name;
     }
-    public String getFullName() {
-        final StringBuilder nameBuilder = new StringBuilder(this.name == null ? "" : this.name);
+    public URL getJDocURL() {
+        return updater.jdocURL;
+    }
+    public MetaModel getParent() {
+        return updater.parent;
+    }
+    public Set<MetaModel> getChildren() {
+        return getChildren((Type[]) null);
+    }
+    public Updater getUpdater() {
+        return this.updater;
+    }
+
+    /**
+     * @see com.github.codedex.sourceparser.entity.MetaMutable.MetaUpdater
+     * The Updater is implemented as an information reference and interface to it at the same time.
+     */
+    public static class Updater implements MetaUpdater {
+        private Type type;
+        private String name;
+        private URL jdocURL;
+        private MetaModel parent;
+        private final Set<MetaModel> children;
+
+        private final Set<MetaModel> modChildren;
+
+        protected Updater(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+            this.type = type;
+            this.name = name;
+            this.jdocURL = jdocURL;
+            this.parent = parent;
+            this.children = Collections.unmodifiableSet(children);
+
+            this.modChildren = children;
+        }
+
+        public void setType(Type type) {
+            this.type = type;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setJdocURL(URL jdocURL) {
+            this.jdocURL = jdocURL;
+        }
+        public void setParent(MetaModel parent) {
+            this.parent = parent;
+        }
+        public Set<MetaModel> getChildren() {
+            return this.modChildren;
+        }
+    }
+
+    public Set<MetaModel> getChildren(Type... types) {
+        if (types == null || new ArrayList<>(Arrays.asList(types)).contains(Type.ALL)) return updater.children;
+
+        Set<MetaModel> buffer = new LinkedHashSet<>();
+        for (Type type : types)
+            for (MetaModel child : updater.children)
+                if (type.equals(child.getType()))
+                    buffer.add(child);
+        return Collections.unmodifiableSet(buffer);
+    }
+
+    public boolean isRoot() {
+        return updater.parent == null;
+    }
+
+    public MetaModel getRoot() {
         MetaModel iterator = this;
-        while (!iterator.isRoot()) {
+        while (!iterator.isRoot())
+            iterator = iterator.getParent();
+        return iterator;
+    }
+
+    public String getFullName() {
+        final StringBuilder nameBuilder = new StringBuilder(updater.name == null ? "" : updater.name);
+        for (MetaModel iterator = this; !iterator.isRoot(); ) {
             iterator = iterator.getParent();
             nameBuilder.insert(0, ".");
             nameBuilder.insert(0, iterator.getName());
         }
         return nameBuilder.toString();
-    }
-
-    public @Nullable URL getJDocURL() {
-        return this.jdocURL;
-    }
-    public void buildFromJDoc() throws IOException {
-        final URL jdocURL = getJDocURL();
-        if (jdocURL == null) return;
-        final Document entityJDoc = Jsoup.connect(jdocURL.toString()).get();
-
-        final MetaModelJDocV7Fetcher fetcher = new MetaModelJDocV7Fetcher(entityJDoc);
-        buildFromFetcher(fetcher);
-    }
-
-    void setParent(@Nullable MetaModel parent) {
-        if (parent == this.parent) return;  // Redundancy check
-
-        if (this.parent != null)                // Check current parent
-            this.parent.children.remove(this);      // Do not use getChildren(), it returns a copy (Immutability, please use setParent())
-
-        if (parent != null)                     // Check new parent
-            parent.children.add(this);              // Read above
-
-        this.parent = parent;               // Assign new parent
-    }
-    public MetaModel getParent() {
-        return parent;
-    }
-
-    public Set<MetaModel> getChildren() {
-        return getChildren((Type[]) null);
-    }
-    public Set<MetaModel> getChildren(Type... types) {
-        if (types == null || new ArrayList<>(Arrays.asList(types)).contains(Type.ALL)) return new HashSet<>(this.children);
-
-        Set<MetaModel> buffer = new HashSet<>();
-        for (Type type : types)
-            for (MetaModel child : this.children)
-                if (type.equals(child.getType()))
-                    buffer.add(child);
-        return buffer;
-    }
-
-    public boolean isRoot() {
-        return parent == null;
-    }
-
-    public MetaModel getRoot() {
-        MetaModel iterator = this;
-        while (!iterator.isRoot()) {
-            iterator = iterator.getParent();
-        }
-        return iterator;
-    }
-
-    /**
-     * Clears up all references to this object that could be out of reach for the user
-     * @param newParent Represents the new parent the children of this instance will have
-     * @return The new parent
-     */
-    public MetaModel kill(@Nullable MetaModel newParent) {
-        this.jdocURL = null;
-        setParent(null);
-        for (MetaModel child : children)
-            child.setParent(newParent);
-        return newParent;
-    }
-
-    public static MetaModel getMetaModel(MetaModel.Type type, @NonNull String name, MetaModel parent) {
-        switch (type) {
-            case CLASS:
-                return new MetaClass(name, parent);
-            case INTERFACE:
-                return new MetaInterface(name, parent);
-            case PACKAGE:
-                if (parent instanceof MetaPackage)
-                    return new MetaPackage(name, (MetaPackage) parent);     // "break;" / "else" missing on purpose
-            default:
-                return new MetaPlaceholder(name, parent);
-        }
     }
 }

@@ -1,13 +1,14 @@
 package com.github.codedex.sourceparser.entity.project.model;
 
-import android.support.annotation.Nullable;
-
+import com.github.codedex.sourceparser.entity.AccessModifiable;
 import com.github.codedex.sourceparser.entity.NonAccessModifiable;
 import com.github.codedex.sourceparser.entity.object.MetaMethod;
-import com.github.codedex.sourceparser.fetcher.MetaModelFetcher;
 
-import java.util.HashSet;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Set;
+
+import static com.github.codedex.sourceparser.Utils.checkSet;
 
 /**
  * @author Patrick "IPat" Hein
@@ -16,55 +17,76 @@ import java.util.Set;
  *  Child / Parent           - Describes classes path
  *  Superclass / Subclass    - Describes classes inheritance
  *
- * MetaTypes represent the kinds of instances that can be made. Hard to explain, here's an example:
+ * MetaTypes represent the kinds of instances that can be made. Hard to explain, here are use cases:
  *
  * Any class is a MetaType, any interface is as well. Annotations, Enums and Exceptions are compiled as classes, so they're also MetaTypes.
  */
-public abstract class MetaType extends MetaModel implements NonAccessModifiable.AccessModifiable {
+public abstract class MetaType extends MetaModel implements NonAccessModifiable, AccessModifiable {
 
-    private AccessModifier accessModifier = AccessModifier.PACKAGE;
-    private Set<NonAccessModifier> nonAccessModifiers;
-    private String code = "";
-    private Set<MetaMethod> methods = new HashSet<>(0);
+    protected final Updater updater;
 
-    protected MetaType(Type type, MetaModelFetcher fetcher) {
-        super(type, fetcher);
-        this.nonAccessModifiers = getDefaultNonAccessModifiers(fetcher.getParent());
-        this.code = fetcher.getCode();
+    protected MetaType(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                       AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                       Set<MetaMethod> methods, String code) {
+        super(
+                new Updater(type, name, jdocURL, parent, children,
+                accessModifier, checkSet(nonAccessModifiers), checkSet(methods), code));
+        this.updater = (Updater) super.updater;
     }
 
-    public void setCode(@Nullable String code) {
-        this.code = code;
-    }
-    @Nullable public String getCode() {
-        return this.code;
-    }
+    public static class Updater extends MetaModel.Updater implements MetaUpdater {
 
-    public Set<MetaMethod> getMethods() {
-        return this.methods;
-    }
+        private AccessModifier accessModifier;
+        private final Set<NonAccessModifier> nonAccessModifiers;
+        private final Set<MetaMethod> methods;
+        private String code;
 
-    // TODO: Override in MetaClass and MetaInterface for further use of Fetcher
-    public void buildFromFetcher(MetaModelFetcher fetcher) {
-        final String code = fetcher.getCode();
-        final Set<MetaMethod> methods = fetcher.getMethods();
+        private final Set<NonAccessModifier> modNonAccessModifiers;
+        private final Set<MetaMethod> modMethods;
 
-        if (code != null)
+        protected Updater(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                        AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                        Set<MetaMethod> methods, String code) {
+            super(type, name, jdocURL, parent, children);
+
+            this.accessModifier = accessModifier;
+            this.nonAccessModifiers = Collections.unmodifiableSet(nonAccessModifiers);
+            this.methods = Collections.unmodifiableSet(methods);
             this.code = code;
 
-        if (methods != null)
-            this.methods = methods;
+            this.modNonAccessModifiers = nonAccessModifiers;
+            this.modMethods = methods;
+        }
+
+        public void setAccessModifier(AccessModifier accessModifier) {
+            this.accessModifier = accessModifier;
+        }
+        public Set<NonAccessModifier> getNonAccessModifiers() {
+            return this.modNonAccessModifiers;
+        }
+        public Set<MetaMethod> getMethods() {
+            return this.modMethods;
+        }
+        public void setCode(String code) {
+            this.code = code;
+        }
     }
 
     public AccessModifier getAccessModifier() {
-        return this.accessModifier;
+        return updater.accessModifier;
     }
-
     public Set<NonAccessModifier> getNonAccessModifiers() {
-        return this.nonAccessModifiers;
+        return updater.nonAccessModifiers;
+    }
+    public Set<MetaMethod> getMethods() {
+        return updater.methods;
+    }
+    public String getCode() {
+        return updater.code;
     }
 
-    // TODO: Every MetaType happens to contain Methods in the section "Method Detail".
+    // TODO: Every MetaTypeFetcher happens to contain Methods in the section "Method Detail".
+    // TODO: Move this section to the Fetcher. This could almost be used as a Javadoc for the appropriate class.
     // An enum also has "Enum Constant Detail".
     // There is usually a Method Summary at the top, which shouldn't be used mainly, since the bottom is more descriptive. Though, it also contains information about method inheritance.
     // Classes and enums show their inheritance tree at the top, while interfaces just show direct sub- or superinterfaces.

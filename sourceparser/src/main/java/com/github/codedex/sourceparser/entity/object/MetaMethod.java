@@ -13,7 +13,9 @@ import java.util.Set;
 /**
  * @author Patrick "IPat" Hein
  *
- * Immutable dependencies that need to be made immutable yet: TODO
+ * Modifiable attribute container
+ *
+ * Dependencies that need to be made MetaMutable yet: TODO
  * @see MetaType
  * @see MetaParameter
  * @see MetaThrowable
@@ -31,7 +33,7 @@ public class MetaMethod implements MetaMutable, NonAccessModifiable, AccessModif
     // Problem is potentially solvable by having backup references which refer to this object and
     // replace all method return values to the new object created by a replace() method
 
-    // TODO: Remove InfoContainer and MetaMutable - DONT create a replace(fetcher) method. fetcher functionalities shouldnt be implemented here,
+    // TODO: Remove Updater and MetaMutable - DONT create a replace(fetcher) method. fetcher functionalities shouldnt be implemented here,
     // The fetcher is supposed to manage new objects and connections, not the object itself. the old object needs to provide connections
     // once deactivated. either the fetcher then notifies the connected objects of the new object (really preferred, but how?)
     // or the old objects methods simply return the new objects values (unpreferred)
@@ -47,80 +49,88 @@ public class MetaMethod implements MetaMutable, NonAccessModifiable, AccessModif
     // Think of how to properly design the object without it being too complicated:
     // Setters for each attribute. Reminder: DONT create a set(fetcher) method. the fetcher has a "MetaModel createModel(?)" method.
 
-    private InfoContainer info;
+    protected final Updater updater;
 
     public MetaMethod(AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
                       MetaType returnType, String identifier,
                       List<MetaParameter> parameters, Set<MetaThrowable> exceptions) {
 
-        this.info = new InfoContainer(accessModifier, nonAccessModifiers, returnType, identifier, parameters, exceptions);
+        this.updater = new Updater(accessModifier, nonAccessModifiers, returnType, identifier, parameters, exceptions);
     }
 
     public AccessModifier getAccessModifier() {
-        return info.accessModifier;
+        return updater.accessModifier;
     }
     public Set<NonAccessModifier> getNonAccessModifiers() {
-        return info.nonAccessModifiers;
+        return updater.nonAccessModifiers;
     }
     public MetaType getReturnType() {
-        return info.returnType;
+        return updater.returnType;
     }
     public String getIdentifier() {
-        return info.identifier;
+        return updater.identifier;
     }
     public List<MetaParameter> getParameters() {
-        return info.parameters;
+        return updater.parameters;
     }
     public Set<MetaThrowable> getExceptions() {
-        return info.exceptions;
+        return updater.exceptions;
     }
 
-    public InfoContainer getContainer() {
-
+    public Updater getUpdater() {
+        return this.updater;
     }
 
-    private static class InfoContainer implements MetaInfo {
+    /**
+     * @see com.github.codedex.sourceparser.entity.MetaMutable.MetaUpdater
+     * The Updater is implemented as an information reference and interface to it at the same time.
+     */
+    public class Updater implements MetaUpdater {
 
-        private final AccessModifier accessModifier;
         private final Set<NonAccessModifier> nonAccessModifiers;
-        private final MetaType returnType;
-        private final String identifier;
         private final List<MetaParameter> parameters;
         private final Set<MetaThrowable> exceptions;
+        private AccessModifier accessModifier;
+        private MetaType returnType;
+        private String identifier;
 
-        private InfoContainer(AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
-                             MetaType returnType, String identifier,
-                             List<MetaParameter> parameters, Set<MetaThrowable> exceptions) {
+        // There is no reason for any user of the interface to change the Sets or Lists reference pointers.
+        private final Set<NonAccessModifier> modNonAccessModifiers;
+        private final List<MetaParameter> modParameters;
+        private final Set<MetaThrowable> modExceptions;
+
+        protected Updater(AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                        MetaType returnType, String identifier,
+                        List<MetaParameter> parameters, Set<MetaThrowable> exceptions) {
             this.nonAccessModifiers = Collections.unmodifiableSet(nonAccessModifiers);
             this.parameters = Collections.unmodifiableList(parameters);
             this.exceptions = Collections.unmodifiableSet(exceptions);
             this.accessModifier = accessModifier;
             this.returnType = returnType;
             this.identifier = identifier;
+
+            this.modNonAccessModifiers = nonAccessModifiers;
+            this.modParameters = parameters;
+            this.modExceptions = exceptions;
         }
 
-        public AccessModifier getAccessModifier() {
-            return this.accessModifier;
-        }
         public Set<NonAccessModifier> getNonAccessModifiers() {
-            return this.nonAccessModifiers;
-        }
-        public MetaType getReturnType() {
-            return this.returnType;
-        }
-        public String getIdentifier() {
-            return this.identifier;
+            return this.modNonAccessModifiers;
         }
         public List<MetaParameter> getParameters() {
-            return this.parameters;
+            return this.modParameters;
         }
         public Set<MetaThrowable> getExceptions() {
-            return this.exceptions;
+            return this.modExceptions;
         }
-
-        @Override
-        public void replace() {
-
+        public void setAccessModifier(AccessModifier modifier) {
+            this.accessModifier = modifier;
+        }
+        public void setReturnType(MetaType type) {
+            this.returnType = type;
+        }
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
         }
     }
 }

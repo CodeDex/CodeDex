@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class MetaInterface extends MetaType {
 
-    private Set<MetaType> superclasses = new HashSet<>(0);
+    private Set<MetaType> superclasses = new HashSet<>();
 
     protected MetaInterface(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, Set<MetaType> superclasses, @Nullable String code) {
         super(type, name, parent, code);

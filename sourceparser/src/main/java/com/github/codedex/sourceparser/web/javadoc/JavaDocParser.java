@@ -183,7 +183,7 @@ public class JavaDocParser {
         final JDocAllClassesFetcher fetcher = new JDocAllClassesV7AndAboveFetcher(allClassesDocument);  // The Fetcher already fetches at creation
         final MetaRoot packageRoot = new MetaRoot();
 
-        Set<ClassEntityInfoContainer> entityNestQueue = new HashSet<>(fetcher.size());                                   // This queue is supposed to get worked on at the end
+        Set<ClassEntityInfoContainer> entityNestQueue = new HashSet<>();                                   // This queue is supposed to get worked on at the end
             // This for loop extracts all the information from the HTML document, puts them into a queue and also creates / finds the needed package for each class / interface
         for (final JDocAllClassesFetcher.JDocAllClassesEntity allClassesEntity : fetcher) {
             URL entityJDocURL = null;

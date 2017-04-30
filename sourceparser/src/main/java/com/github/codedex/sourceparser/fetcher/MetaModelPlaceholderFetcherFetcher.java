@@ -6,12 +6,12 @@ import com.github.codedex.sourceparser.entity.project.model.MetaModel;
  * @author Patrick "IPat" Hein
  */
 
-public final class MetaModelPlaceholderFetcher extends MetaModelFetcher {
+public final class MetaModelPlaceholderFetcherFetcher extends MetaTypeFetcher {
 
     private final String name;
     private final MetaModel.Type type;
 
-    public MetaModelPlaceholderFetcher(String name, MetaModel.Type type) {
+    public MetaModelPlaceholderFetcherFetcher(String name, MetaModel.Type type) {
         if (name == null)
             name = "";
         this.name = name;
@@ -20,7 +20,7 @@ public final class MetaModelPlaceholderFetcher extends MetaModelFetcher {
         this.type = type;
     }
 
-    public MetaModelPlaceholderFetcher() {
+    public MetaModelPlaceholderFetcherFetcher() {
         this("", MetaModel.Type.PLACEHOLDER);
     }
 

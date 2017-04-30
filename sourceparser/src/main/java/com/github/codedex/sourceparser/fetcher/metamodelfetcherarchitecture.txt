@@ -24,3 +24,17 @@ DESCRIPTION #1b:
 MetaModels are only containers for the information. They are supposed to be immutable once created.
 MetaModelFetchers have the functionality of using input to fetch necessary information for the MetaModels.
 MetaModelBuilders use the functions of MetaModelFetchers to create new MetaModels.
+
+
+Successfully converted:
+
+MetaModel
+MetaType
+MetaMethod
+
+
+To be converted:
+
+Subclasses of MetaType
+MetaPackage
+Every Meta* in the object scope (besides MetaMethod), but those need to be created in the first place.
