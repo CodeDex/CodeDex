@@ -29,12 +29,15 @@ MetaModelBuilders use the functions of MetaModelFetchers to create new MetaModel
 Successfully converted:
 
 MetaModel
+MetaPlaceholder
+MetaPackage
 MetaType
+MetaClass
+MetaInterface
 MetaMethod
 
 
 To be converted:
 
-Subclasses of MetaType
-MetaPackage
+Subclasses of MetaClass
 Every Meta* in the object scope (besides MetaMethod), but those need to be created in the first place.

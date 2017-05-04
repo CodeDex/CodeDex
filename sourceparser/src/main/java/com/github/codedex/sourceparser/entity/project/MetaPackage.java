@@ -1,10 +1,9 @@
 package com.github.codedex.sourceparser.entity.project;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
-import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
+
+import java.net.URL;
+import java.util.Set;
 
 /**
  * @author Patrick "IPat" Hein
@@ -12,15 +11,27 @@ import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
 
 public class MetaPackage extends MetaModel {
 
-    protected MetaPackage(@NonNull Type type, @NonNull String name, @Nullable MetaPackage parent) {
-        super(type, name, parent);
+    private final Updater updater;
+    public Updater getUpdater() {
+        return this.updater;
     }
 
-    public MetaPackage(@NonNull String name, @Nullable MetaPackage parent) {
-        super(Type.PACKAGE, name, parent == null ? new MetaRoot() : parent);
+    public MetaPackage(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+        this(new Updater(name, jdocURL, parent, children));
     }
 
-    public MetaPackage(@NonNull String name) {
-        this(name, null);
+    protected MetaPackage(Updater updater) {
+        super(updater);
+        this.updater = updater;
+    }
+
+    public Type getType() {
+        return Type.PACKAGE;
+    }
+
+    public static class Updater extends MetaModel.Updater {
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+            super(name, jdocURL, parent, children);
+        }
     }
 }

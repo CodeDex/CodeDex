@@ -23,18 +23,37 @@ import static com.github.codedex.sourceparser.Utils.checkSet;
  */
 public abstract class MetaType extends MetaModel implements NonAccessModifiable, AccessModifiable {
 
-    protected final Updater updater;
-
-    protected MetaType(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
-                       AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
-                       Set<MetaMethod> methods, String code) {
-        super(
-                new Updater(type, name, jdocURL, parent, children,
-                accessModifier, checkSet(nonAccessModifiers), checkSet(methods), code));
-        this.updater = (Updater) super.updater;
+    private final Updater updater;
+    public Updater getUpdater() {
+        return this.updater;
     }
 
-    public static class Updater extends MetaModel.Updater implements MetaUpdater {
+    public MetaType(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                       AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                       Set<MetaMethod> methods, String code) {
+        this(new Updater(name, jdocURL, parent, checkSet(children),
+                accessModifier, checkSet(nonAccessModifiers), checkSet(methods), code));
+    }
+
+    protected MetaType(Updater updater) {
+        super(updater);
+        this.updater = updater;
+    }
+
+    public AccessModifier getAccessModifier() {
+        return updater.accessModifier;
+    }
+    public Set<NonAccessModifier> getNonAccessModifiers() {
+        return updater.nonAccessModifiers;
+    }
+    public Set<MetaMethod> getMethods() {
+        return updater.methods;
+    }
+    public String getCode() {
+        return updater.code;
+    }
+
+    public static class Updater extends MetaModel.Updater {
 
         private AccessModifier accessModifier;
         private final Set<NonAccessModifier> nonAccessModifiers;
@@ -44,10 +63,10 @@ public abstract class MetaType extends MetaModel implements NonAccessModifiable,
         private final Set<NonAccessModifier> modNonAccessModifiers;
         private final Set<MetaMethod> modMethods;
 
-        protected Updater(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
                         AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
                         Set<MetaMethod> methods, String code) {
-            super(type, name, jdocURL, parent, children);
+            super(name, jdocURL, parent, children);
 
             this.accessModifier = accessModifier;
             this.nonAccessModifiers = Collections.unmodifiableSet(nonAccessModifiers);
@@ -70,19 +89,6 @@ public abstract class MetaType extends MetaModel implements NonAccessModifiable,
         public void setCode(String code) {
             this.code = code;
         }
-    }
-
-    public AccessModifier getAccessModifier() {
-        return updater.accessModifier;
-    }
-    public Set<NonAccessModifier> getNonAccessModifiers() {
-        return updater.nonAccessModifiers;
-    }
-    public Set<MetaMethod> getMethods() {
-        return updater.methods;
-    }
-    public String getCode() {
-        return updater.code;
     }
 
     // TODO: Every MetaTypeFetcher happens to contain Methods in the section "Method Detail".

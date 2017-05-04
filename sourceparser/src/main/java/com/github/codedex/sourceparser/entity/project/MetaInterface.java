@@ -1,14 +1,14 @@
 package com.github.codedex.sourceparser.entity.project;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
+import com.github.codedex.sourceparser.entity.object.MetaMethod;
 import com.github.codedex.sourceparser.entity.project.model.MetaType;
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
 
-import java.util.EnumSet;
-import java.util.HashSet;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Set;
+
+import static com.github.codedex.sourceparser.Utils.checkSet;
 
 /**
  * @author Patrick "IPat" Hein
@@ -16,25 +16,47 @@ import java.util.Set;
 
 public class MetaInterface extends MetaType {
 
-    private Set<MetaType> superclasses = new HashSet<>();
-
-    protected MetaInterface(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent, Set<MetaType> superclasses, @Nullable String code) {
-        super(type, name, parent, code);
+    private final Updater updater;
+    public Updater getUpdater() {
+        return this.updater;
     }
 
-    public MetaInterface(@NonNull String name, @Nullable MetaModel parent) {
-        this(name, parent, null);
+    public MetaInterface(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                         AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                         Set<MetaMethod> methods, String code, Set<MetaType> superclasses) {
+        this(new Updater(name, jdocURL, parent, children, accessModifier, nonAccessModifiers, methods, code, checkSet(superclasses)));
     }
 
-    public MetaInterface(@NonNull String name, @Nullable MetaModel parent, @Nullable String code) {
-        this(name, parent, null, code);
+    protected MetaInterface(Updater updater) {
+        super(updater);
+        this.updater = updater;
     }
 
-    public MetaInterface(@NonNull String name, @Nullable MetaModel parent, Set<MetaType> superclasses, @Nullable String code) {
-        super(Type.INTERFACE, name, parent, code);
+    public Type getType() {
+        return Type.INTERFACE;
+    }
+    public Set<MetaType> getSuperclasses() {
+        return updater.superclasses;
     }
 
-    protected Set<NonAccessModifier> getDefaultNonAccessModifiers(MetaModel parent) {
-        return EnumSet.of(NonAccessModifier.STATIC);
+    public static class Updater extends MetaType.Updater {
+
+        private final Set<MetaType> superclasses;
+
+        private final Set<MetaType> modSuperclasses;
+
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                          AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                          Set<MetaMethod> methods, String code, Set<MetaType> superclasses) {
+            super(name, jdocURL, parent, children, accessModifier, nonAccessModifiers, methods, code);
+
+            this.superclasses = Collections.unmodifiableSet(superclasses);
+
+            this.modSuperclasses = superclasses;
+        }
+
+        public Set<MetaType> getSuperclasses() {
+            return this.modSuperclasses;
+        }
     }
 }

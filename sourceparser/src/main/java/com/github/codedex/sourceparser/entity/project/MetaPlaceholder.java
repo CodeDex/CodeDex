@@ -1,9 +1,9 @@
 package com.github.codedex.sourceparser.entity.project;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.github.codedex.sourceparser.entity.project.model.MetaModel;
+
+import java.net.URL;
+import java.util.Set;
 
 /**
  * @author Patrick "IPat" Hein
@@ -11,17 +11,28 @@ import com.github.codedex.sourceparser.entity.project.model.MetaModel;
  * Represents a class that wasn't able to be analyzed.
  */
 public final class MetaPlaceholder extends MetaModel {
-    private MetaPlaceholder(@NonNull Type type, @NonNull String name, @Nullable MetaModel parent) {
-        super(type, name, parent);
+
+    private final MetaPackage.Updater updater;
+    public MetaPackage.Updater getUpdater() {
+        return this.updater;
     }
 
-    public MetaPlaceholder(@NonNull String name, @Nullable MetaModel parent) {
-        this(Type.PLACEHOLDER, name, parent);
+    public MetaPlaceholder(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+        this(new MetaPackage.Updater(name, jdocURL, parent, children));
     }
 
-    public void replaceWith(@NonNull MetaModel newMetaModel) {
-        final MetaModel parent = getParent();
-        kill(newMetaModel);
-        newMetaModel.setParent(parent);
+    protected MetaPlaceholder(MetaPackage.Updater updater) {
+        super(updater);
+        this.updater = updater;
+    }
+
+    public Type getType() {
+        return Type.PLACEHOLDER;
+    }
+
+    public static class Updater extends MetaModel.Updater {
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+            super(name, jdocURL, parent, children);
+        }
     }
 }

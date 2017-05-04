@@ -25,7 +25,10 @@ import static com.github.codedex.sourceparser.Utils.checkSet;
 
 public abstract class MetaModel implements MetaMutable {
 
-    protected final Updater updater;
+    private final Updater updater;
+    public Updater getUpdater() {
+        return this.updater;
+    }
 
     public enum Type {
         ALL,
@@ -35,17 +38,15 @@ public abstract class MetaModel implements MetaMutable {
         PLACEHOLDER // Decided against "OTHER" as name, since unresolved classes really are supposed to be resolved and "OTHER" maybe doesn't bring that across
     }
 
-    protected MetaModel(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
-        this.updater = new Updater(type, name, jdocURL, parent, checkSet(children));
+    public MetaModel(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
+        this(new Updater(name, jdocURL, parent, checkSet(children)));
     }
 
     protected MetaModel(Updater updater) {
         this.updater = updater;
     }
 
-    public Type getType() {
-        return updater.type;
-    }
+    public abstract Type getType();
     public String getName() {
         return updater.name;
     }
@@ -58,16 +59,12 @@ public abstract class MetaModel implements MetaMutable {
     public Set<MetaModel> getChildren() {
         return getChildren((Type[]) null);
     }
-    public Updater getUpdater() {
-        return this.updater;
-    }
 
     /**
      * @see com.github.codedex.sourceparser.entity.MetaMutable.MetaUpdater
      * The Updater is implemented as an information reference and interface to it at the same time.
      */
     public static class Updater implements MetaUpdater {
-        private Type type;
         private String name;
         private URL jdocURL;
         private MetaModel parent;
@@ -75,8 +72,7 @@ public abstract class MetaModel implements MetaMutable {
 
         private final Set<MetaModel> modChildren;
 
-        protected Updater(Type type, String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
-            this.type = type;
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children) {
             this.name = name;
             this.jdocURL = jdocURL;
             this.parent = parent;
@@ -85,9 +81,6 @@ public abstract class MetaModel implements MetaMutable {
             this.modChildren = children;
         }
 
-        public void setType(Type type) {
-            this.type = type;
-        }
         public void setName(String name) {
             this.name = name;
         }
