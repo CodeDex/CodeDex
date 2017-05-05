@@ -24,7 +24,8 @@ public class MetaInterface extends MetaType {
     public MetaInterface(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
                          AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
                          Set<MetaMethod> methods, String code, Set<MetaType> superclasses) {
-        this(new Updater(name, jdocURL, parent, children, accessModifier, nonAccessModifiers, methods, code, checkSet(superclasses)));
+        this(new Updater(name, jdocURL, parent, checkSet(children), accessModifier,
+                checkSet(nonAccessModifiers), checkSet(methods), code, checkSet(superclasses)));
     }
 
     protected MetaInterface(Updater updater) {

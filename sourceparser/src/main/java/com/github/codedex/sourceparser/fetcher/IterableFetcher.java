@@ -1,7 +1,8 @@
 package com.github.codedex.sourceparser.fetcher;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,82 +11,34 @@ import java.util.List;
  * The IterableFetcher lets you iterate over its fetched results.
  * @param <I> stands for input  - Represents the input that gets fetched
  * @param <O> stands for output - Represents the unique entities that get iterated over
- * @param <B> stands for buffer - Represents the shared object
- * @see IterableFetcher#prepareSharedObject(I)
+ * @see IterableFetcher#fetch(List, I)
  */
-public abstract class IterableFetcher<I, O, B> implements Iterable<O> {
+public abstract class IterableFetcher<I, O> implements Iterable<O> {
 
-    private final List<O> entityArray;
-    private int size = -1;
+    private final List<O> entities = new LinkedList<>();
+    private final List<O> immEntities = Collections.unmodifiableList(this.entities);
+    private final I input;
 
     public IterableFetcher(I input) {
-        this.entityArray = fetch(input);
+        this.input = input;
+        fetch(this.entities, input);
     }
 
     /**
-     * Prepare an object that size and fetch can share.
-     * @param input the object the shared object gets fetched from
-     * @return the shared object
+     * Fetches the elements and puts them into a list.
+     * @param buffer
      */
-    protected abstract B prepareSharedObject(I input);
+    protected abstract void fetch(List<O> buffer, I input);
 
-    /**
-     * Initializes ArrayList in List<O> fetch(I)
-     * @see IterableFetcher#fetch(Object)
-     *
-     * @param sharedObject prepareSharedObject(I)
-     * @return the lists size
-     */
-    protected abstract int size(B sharedObject);
-
-    public int size() {
-        return this.size;
+    public List<O> getEntities() {
+        return this.immEntities;
     }
 
-    protected abstract void fetch(List<O> buffer, B sharedObject);
-
-    private List<O> fetch(I input) {
-        final B sharedObject = prepareSharedObject(input);
-        size = size(sharedObject);
-        List<O> buffer = new ArrayList<>(size);
-        fetch(buffer, sharedObject);
-        return buffer;
-    }
-
-    /*
-    private O getEntity(int index) {
-        return entityArray.get(index);
+    public Iterator<O> iterator() {
+        return immEntities.iterator();
     }
 
     protected I getInput() {
         return this.input;
-    }
-
-    public static class OutputIterator<I, O> implements Iterator<O> {
-
-        private final IterableFetcher<I, O> fetcher;
-        private int iterator;
-
-        public OutputIterator(IterableFetcher<I, O> fetcher) {
-            this(fetcher, 0);
-        }
-
-        private OutputIterator(IterableFetcher<I, O> fetcher, int iterator) {
-            this.fetcher = fetcher;
-            this.iterator = iterator;
-        }
-
-        public boolean hasNext() {
-            return iterator < fetcher.entityArray.size();
-        }
-
-        public O next() {
-            return fetcher.getEntity(iterator++);
-        }
-    }
-    */
-
-    public Iterator<O> iterator() {
-        return entityArray.iterator();
     }
 }

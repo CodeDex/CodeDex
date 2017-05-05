@@ -26,7 +26,8 @@ public class MetaClass extends MetaType {
                         AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
                         Set<MetaMethod> methods, String code, MetaType superclass,
                         Set<MetaConstructor> constructors, Set<MetaInterface> implementedInterfaces) {
-        this(new Updater(name, jdocURL, parent, children, accessModifier, nonAccessModifiers, methods, code,
+        this(new Updater(name, jdocURL, parent, checkSet(children), accessModifier,
+                checkSet(nonAccessModifiers), checkSet(methods), code,
                 superclass, checkSet(constructors), checkSet(implementedInterfaces)));
     }
 

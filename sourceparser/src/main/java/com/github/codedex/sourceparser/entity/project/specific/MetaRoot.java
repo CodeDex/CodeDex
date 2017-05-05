@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
  * @author Patrick "IPat" Hein
  */
 
-public final class MetaRoot extends MetaPackage {
+public class MetaRoot extends MetaPackage {
 
     private final Updater updater;
     public Updater getUpdater() {

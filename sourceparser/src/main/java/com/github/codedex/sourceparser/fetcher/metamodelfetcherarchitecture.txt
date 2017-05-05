@@ -21,9 +21,12 @@ Multiple MetaModelFetchers for a backup system if a fetcher can't deliver a cert
 
 DESCRIPTION #1b:
 
-MetaModels are only containers for the information. They are supposed to be immutable once created.
-MetaModelFetchers have the functionality of using input to fetch necessary information for the MetaModels.
-MetaModelBuilders use the functions of MetaModelFetchers to create new MetaModels.
+Meta*s are only containers for the information. They are supposed to be immutable once created.
+NOTE: The final design decision is that they are only mutable via their getUpdate() method which returns an interface to modify the Meta*.
+
+*Fetchers have the functionality of using input to fetch necessary information for the Meta*s.
+As every *Fetchers output is data which needs to use an output container output anyways, they're also the Builders.
+This, however, brings up PROBLEM #1. This can be avoided by using a PriorityFetcher, which manages a list of fetchers in its system.
 
 
 Successfully converted:
@@ -40,4 +43,4 @@ MetaMethod
 To be converted:
 
 Subclasses of MetaClass
-Every Meta* in the object scope (besides MetaMethod), but those need to be created in the first place.
+Every Meta* within the object context (besides MetaMethod), but those need to be created in the first place.

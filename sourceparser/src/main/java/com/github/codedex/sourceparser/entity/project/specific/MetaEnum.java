@@ -37,6 +37,11 @@ public final class MetaEnum extends MetaClass {
     }
 
     public static class Updater extends MetaClass.Updater {
-
+        protected Updater(String name, URL jdocURL, MetaModel parent, Set<MetaModel> children,
+                          AccessModifier accessModifier, Set<NonAccessModifier> nonAccessModifiers,
+                          Set<MetaMethod> methods, String code, MetaType superclass,
+                          Set<MetaConstructor> constructors, Set<MetaInterface> implementedInterfaces) {
+            super(name, jdocURL, parent, children, accessModifier, nonAccessModifiers, methods, code, superclass, constructors, implementedInterfaces);
+        }
     }
 }
