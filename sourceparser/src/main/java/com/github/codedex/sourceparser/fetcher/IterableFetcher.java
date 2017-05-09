@@ -13,7 +13,7 @@ import java.util.List;
  * @param <O> stands for output - Represents the unique entities that get iterated over
  * @see IterableFetcher#fetch(List, I)
  */
-public abstract class IterableFetcher<I, O> implements Iterable<O> {
+public abstract class IterableFetcher<I, O> extends Fetcher implements Iterable<O> {
 
     private final List<O> entities = new LinkedList<>();
     private final List<O> immEntities = Collections.unmodifiableList(this.entities);
@@ -21,7 +21,6 @@ public abstract class IterableFetcher<I, O> implements Iterable<O> {
 
     public IterableFetcher(I input) {
         this.input = input;
-        fetch(this.entities, input);
     }
 
     /**
@@ -29,6 +28,13 @@ public abstract class IterableFetcher<I, O> implements Iterable<O> {
      * @param buffer
      */
     protected abstract void fetch(List<O> buffer, I input);
+
+    /**
+     * Start the fetching process
+     */
+    protected void fetch() {
+        fetch(this.entities, input);
+    }
 
     public List<O> getEntities() {
         return this.immEntities;

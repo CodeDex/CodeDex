@@ -6,7 +6,7 @@ package com.github.codedex.sourceparser.fetcher;
  * Adapter for Fetchers
  */
 
-public abstract class MetaTypeFetcher {
+public abstract class MetaTypeFetcher extends Fetcher {
     /**
      * TODO Fetcher functionality to build a class from abstract methods
      */

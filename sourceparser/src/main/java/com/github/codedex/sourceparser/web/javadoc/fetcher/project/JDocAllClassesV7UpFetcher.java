@@ -36,6 +36,7 @@ public class JDocAllClassesV7UpFetcher extends JDocAllClassesFetcher {
     public JDocAllClassesV7UpFetcher(Document jDocument, URL source) {
         super(jDocument);
         urlContext = source;
+        fetch();
     }
 
     /**
@@ -94,8 +95,8 @@ public class JDocAllClassesV7UpFetcher extends JDocAllClassesFetcher {
 
         // packagePathElements
         if (relJDocURL != null && !relJDocURL.equals("")) {
-            final int packageEndex = title.lastIndexOf("/");
-            final String packagePath = title.substring(0, packageEndex);
+            final int packageEndex = relJDocURL.lastIndexOf("/");
+            final String packagePath = relJDocURL.substring(0, packageEndex);
             packagePathElements = packagePath.split("/");
         } else if (title != null && !title.endsWith(" in ")) {                                      // English, however it appears JavaDoc isn't available in other languages anyways
             final int packageIndex = title.indexOf(" in ") + 4;
@@ -125,7 +126,8 @@ public class JDocAllClassesV7UpFetcher extends JDocAllClassesFetcher {
             metaType = new MetaInterface(name, jdocURL, parent, null, null, null, null, null, null);
         else
             metaType = new MetaClass(name, jdocURL, parent, null, null, null, null, null, null, null, null);
-        return metaType;
+
+        return fixParentDependency(metaType);
     }
 
     /**

@@ -1,10 +1,13 @@
 package com.github.codedex.sourceparser.entity.object;
 
+import com.github.codedex.sourceparser.entity.AccessModifiable;
 import com.github.codedex.sourceparser.entity.NonAccessModifiable;
 
 /**
  * @author Patrick "IPat" Hein
  */
 
-public class MetaConstructor implements NonAccessModifiable.AccessModifiable {
+// TODO: --- ONLY ABSTRACT TEMPORARILY ---
+public abstract class MetaConstructor implements NonAccessModifiable, AccessModifiable {
+
 }

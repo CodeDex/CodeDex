@@ -1,12 +1,15 @@
 package com.github.codedex.sourceparser.entity.project.model;
 
 import com.github.codedex.sourceparser.entity.MetaMutable;
+import com.github.codedex.sourceparser.entity.project.specific.MetaRoot;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import static com.github.codedex.sourceparser.Utils.checkSet;
@@ -125,5 +128,50 @@ public abstract class MetaModel implements MetaMutable {
             nameBuilder.insert(0, iterator.getName());
         }
         return nameBuilder.toString();
+    }
+
+    public String toString() {
+        return getName();
+    }
+
+    public String toStringTree() {
+
+        int level = 0;
+        final StringBuilder builder = new StringBuilder();
+        MetaModel iterator = this;
+        LinkedList<MetaModel> queue = new LinkedList<>();
+        while (true) {
+            appendWithLevel(level, iterator.getName(), builder);
+
+            int it = 0;
+            for (MetaModel child : iterator.getChildren())
+                queue.add(it++, child);
+            queue.add(it, null);
+
+            iterator = queue.poll();
+            level++;
+            while (iterator == null) {
+                if (0 < level--)
+                    iterator = queue.poll();
+                else
+                    return builder.toString();
+            }
+        }
+    }
+
+    private void appendWithLevel(int level, String appendix, StringBuilder builder) {
+        for (int it = 0; it < level; it++)
+            builder.append("|");
+        builder.append(appendix);
+        builder.append("\n");
+    }
+
+    private void appendWithLevel(int level, String appendix) {
+        final StringBuilder builder = new StringBuilder();
+        for (int it = 0; it < level; it++)
+            builder.append("|");
+        builder.append(appendix);
+        builder.append("\n");
+        System.out.println(builder.toString());
     }
 }

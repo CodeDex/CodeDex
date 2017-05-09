@@ -85,7 +85,8 @@ public class JavaDocParser {
     }
 
     public static MetaRoot parse(URL url) {
-        return parse(getJsoupDoc(url), url);
+        final Document doc = getJsoupDoc(url);
+        return parse(doc, url);
     }
 
     private static MetaRoot parse(Document document, URL url) {
