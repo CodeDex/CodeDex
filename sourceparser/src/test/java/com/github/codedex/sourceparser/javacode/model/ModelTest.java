@@ -18,10 +18,13 @@ public class ModelTest {
     @Test
     public void java7() throws MalformedURLException {
         final MetaRoot root = JavaDocParser.parse(new URL("https://docs.oracle.com/javase/7/docs/api/allclasses-noframe.html"));
+        assertFalse("Not null", root == null);
+
         String rootTree = root.toStringTree();
+        assertFalse("Not empty", rootTree.isEmpty());
         System.out.println(rootTree);
 
-        assertFalse("Not null", root == null);
+        // --- Specific javadoc test ---
         assertTrue(rootTree.contains("\n|org\n"));
     }
 }
