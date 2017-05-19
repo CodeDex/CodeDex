@@ -135,7 +135,6 @@ public abstract class MetaModel implements MetaMutable {
     }
 
     public String toStringTree() {
-
         int level = 0;
         final StringBuilder builder = new StringBuilder();
         MetaModel iterator = this;
@@ -164,14 +163,5 @@ public abstract class MetaModel implements MetaMutable {
             builder.append("|");
         builder.append(appendix);
         builder.append("\n");
-    }
-
-    private void appendWithLevel(int level, String appendix) {
-        final StringBuilder builder = new StringBuilder();
-        for (int it = 0; it < level; it++)
-            builder.append("|");
-        builder.append(appendix);
-        builder.append("\n");
-        System.out.println(builder.toString());
     }
 }
